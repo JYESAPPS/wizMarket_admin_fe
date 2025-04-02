@@ -119,11 +119,7 @@ const LocStoreList = ({ data }) => {
     const handleTemplateClick = (event, storeBusinessNumber) => {
         event.preventDefault();
 
-        const currentPort = window.location.port;
-        // const ADS_PORT = currentPort === "3000" ? "3002" : "82";  
-        const ADS_PORT = currentPort === "3000" ? "3002" : "53002";
-
-        const ADS_URL = `${process.env.REACT_APP_BASE_URL}:${ADS_PORT}/ads/temp2/${storeBusinessNumber}`;
+        const ADS_URL = `${process.env.REACT_APP_ADS}/ads/temp2/${storeBusinessNumber}`;
         const width = 393;
         const height = 900;
         const left = window.screenX + (window.outerWidth - width) / 2;
