@@ -19,6 +19,7 @@ import TestDrawImage from "./pages/TestDrawImage/TestDrawImage";
 import TestRemoveBackground from "./pages/TestRemoveBackground/TestRemoveBackground";
 import TestGenerateVideo from "./pages/TestGenerateVideo/TestGenerateVideo";
 import TestMusic from "./pages/TestMusic/TestMusic";
+import TestStory from "./pages/TestStory/TestStory";
 
 
 const Router = () => {
@@ -44,6 +45,7 @@ const Router = () => {
         <Route path="/test/remove/background" element={<TestRemoveBackground />} />
         <Route path="/test/generate/video" element={<TestGenerateVideo />} />
         <Route path="/test/music" element={<TestMusic />} />
+        <Route path="/test/story" element={<TestStory />} />
       </Routes>
     </BrowserRouter>
   );

@@ -15,7 +15,6 @@ const TestNewGptModel = () => {
     const [claudeResultLoding, setClaudeResultLoading] = useState(false)
     const [claudeResult, setClaudeResult] = useState('');
 
-    
 
     const handleOldChange = (event) => {
         setOldPrompt(event.target.value); // 상태 업데이트
@@ -101,7 +100,7 @@ const TestNewGptModel = () => {
                     </section>
 
                     {/* 좌우 영역 컨테이너 */}
-                    <div className="flex flex-row gap-4 flex-1">
+                    <div className="flex flex-row gap-4">
                         {/* 왼쪽 영역 */}
                         <div className="flex-1 flex flex-col gap-2">
                             <section>
@@ -112,7 +111,7 @@ const TestNewGptModel = () => {
                                 <textarea
                                     className="w-full p-2 border rounded"
                                     placeholder="내용을 입력하세요"
-                                    rows="30"
+                                    rows="10"
                                     cols="50"
                                     value={oldPrompt} // 상태 값 연결
                                     onChange={handleOldChange} // 입력 값 변경 처리
@@ -156,7 +155,7 @@ const TestNewGptModel = () => {
                                 <textarea
                                     className="w-full p-2 border rounded"
                                     placeholder="내용을 입력하세요"
-                                    rows="30"
+                                    rows="10"
                                     cols="50"
                                     value={newPrompt} // 상태 값 연결
                                     onChange={handleNewChange} // 입력 값 변경 처리
@@ -198,7 +197,7 @@ const TestNewGptModel = () => {
                                 <textarea
                                     className="w-full p-2 border rounded"
                                     placeholder="내용을 입력하세요"
-                                    rows="30"
+                                    rows="10"
                                     cols="50"
                                     value={claudePrompt} // 상태 값 연결
                                     onChange={handleClaudeChange} // 입력 값 변경 처리

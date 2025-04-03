@@ -164,19 +164,22 @@ const Aside = () => {
                             className={`transition-[max-height] duration-300 ease-in-out overflow-hidden ${isOpen.section5 ? 'max-h-[500px]' : 'max-h-0'}`}
                         >
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
-                                <Link to="/test/gpt/model">gpt 새 모델 테스트</Link>
-                            </li>
-                            <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
                                 <Link to="/test/draw/image">이미지 테스트</Link>
                             </li>
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
-                                <Link to="/test/remove/background">이미지 배경 제거</Link>
+                                <Link to="/test/story">이미지 스토리 테스트</Link>
                             </li>
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
                                 <Link to="/test/generate/video">영상 생성, 이미지 배경 생성</Link>
                             </li>
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
                                 <Link to="/test/music">음악 생성</Link>
+                            </li>
+                            <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
+                                <Link to="/test/gpt/model">gpt 새 모델 테스트</Link>
+                            </li>
+                            <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
+                                <Link to="/test/remove/background">이미지 배경 제거</Link>
                             </li>
                         </div>
                     </ul>
