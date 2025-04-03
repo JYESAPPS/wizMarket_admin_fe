@@ -19,6 +19,12 @@ const TestStory = () => {
     const [storyPrompt, setStoryPrompt] = useState(story || ""); // 초기값을 story로 설정
     const [storyImage, setStoryImage] = useState([]); // 스토리 생성된 이미지 URL
     const [imageLoading, setImageLoading] = useState(false); // 이미지 로딩 상태
+    const [storeNumber, setStoreNumber] = useState(""); // 사업자 등록 번호
+    const [info, setInfo] = useState(""); // 사업자 등록 번호 확인 결과
+    const [storeNumber2, setStoreNumber2] = useState("")
+    const [name, setName] = useState("")
+    const [refDate, setRefDate] = useState("")
+    const [trueInfo, setTrueInfo] = useState([])
 
     // 파일 선택 시 미리보기 및 파일 저장
     const previewImage = (e) => {
@@ -80,8 +86,6 @@ const TestStory = () => {
         }
     };
 
-
-
     // 유사 이미지 생성 함수
     const generateImage = async () => {
         setImageLoading(true);
@@ -105,6 +109,61 @@ const TestStory = () => {
             console.error("저장 중 오류 발생:", err);
         } finally {
             setImageLoading(false);
+        }
+    };
+
+
+    // 사업자 상태조회
+    const confirmNumber = async () => {
+
+        const basicInfo = {
+            ads_id: storeNumber
+        };
+
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/confirm/store`,
+                basicInfo
+            );
+
+            if (response.data) {
+                console.log(response.data);
+                setInfo(response.data.status_code);
+            } else {
+                console.error("비디오 생성 실패:", response.data);
+            }
+        } catch (err) {
+            console.error("저장 중 오류 발생:", err);
+        } finally {
+
+        }
+    };
+
+    // 사업자 진위확인
+    const confirmTrueNumber = async () => {
+
+        const basicInfo = {
+            b_no: storeNumber2,
+            start_dt: refDate,
+            p_nm : name
+        };
+
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/confirm/true/store`,
+                basicInfo
+            );
+
+            if (response.data) {
+                console.log(response.data.data);
+                setTrueInfo(response.data.data);
+            } else {
+                console.error("비디오 생성 실패:", response.data);
+            }
+        } catch (err) {
+            console.error("저장 중 오류 발생:", err);
+        } finally {
+
         }
     };
 
@@ -197,10 +256,12 @@ const TestStory = () => {
                                     {Array.isArray(storyImage) && storyImage.length > 0 && (
                                         <Swiper
                                             modules={[Navigation, Pagination]}
+
                                             navigation
                                             pagination={{ clickable: true }}
                                             spaceBetween={30}
                                             slidesPerView={1}
+                                            loop={true}
                                             className="max-w-[300px]"
                                         >
                                             {storyImage.map((image, index) => (
@@ -215,6 +276,84 @@ const TestStory = () => {
                                         </Swiper>
                                     )}
                                 </section>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='pt-24'>
+                        <div className='flex gap-8'>
+                            <div>
+                                <p>예시</p>
+                                <p>사업자등록 번호 : 1138630615</p>
+                                <p>대표자 성명 : 정용관</p>
+                                <p>개업일자 : 20090622</p>
+                            </div>
+                            <div className='flex flex-col'>
+                                <h2>사업자 상태조회</h2>
+                                <div className='pt-4'>
+                                    <input
+                                        type="text"
+                                        placeholder="숫자만 입력"
+                                        className="border-2 border-black p-3 h-full overflow-auto resize-none whitespace-pre-line"
+                                        value={storeNumber}
+                                        onChange={(e) => setStoreNumber(e.target.value)}
+                                    />
+                                </div>
+                                <div className='pt-4'>
+                                    <button
+                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                        onClick={confirmNumber}
+                                    >
+                                        확인
+                                    </button>
+                                </div>
+                                <div>
+                                    {info}
+                                </div>
+                            </div>
+                            <div className='flex flex-col'>
+                                <h2>사업자 진위확인</h2>
+                                <div className='pt-4 flex flex-col gap-2'>
+                                    <input
+                                        type="text"
+                                        placeholder="사업자등록 번호"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={storeNumber2}
+                                        onChange={(e) => setStoreNumber2(e.target.value)}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="대표자성명"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="개업일자 - YYYYMMDD 형식"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={refDate}
+                                        onChange={(e) => setRefDate(e.target.value)}
+                                    />
+                                </div>
+                                <div className='pt-4'>
+                                    <button
+                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                        onClick={confirmTrueNumber}
+                                    >
+                                        확인
+                                    </button>
+                                </div>
+                                <div>
+                                    {trueInfo.map((item, index) => (
+                                        <div key={index} className="p-3 border-b">
+                                            <p>유효성 코드: {item.valid}</p>
+                                            <p>상태: {item.status.b_stt}</p>
+                                            <p>과세 유형: {item.status.tax_type}</p>
+                                            <p>사업 종료일: {item.status.end_dt}</p>
+                                            <p>통합납세 적용 여부: {item.status.utcc_yn}</p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
