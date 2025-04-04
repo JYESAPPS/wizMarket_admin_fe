@@ -19,12 +19,16 @@ const TestStory = () => {
     const [storyPrompt, setStoryPrompt] = useState(story || ""); // 초기값을 story로 설정
     const [storyImage, setStoryImage] = useState([]); // 스토리 생성된 이미지 URL
     const [imageLoading, setImageLoading] = useState(false); // 이미지 로딩 상태
+    
     const [storeNumber, setStoreNumber] = useState(""); // 사업자 등록 번호
-    const [info, setInfo] = useState(""); // 사업자 등록 번호 확인 결과
-    const [storeNumber2, setStoreNumber2] = useState("")
-    const [name, setName] = useState("")
-    const [refDate, setRefDate] = useState("")
-    const [trueInfo, setTrueInfo] = useState([])
+    const [info, setInfo] = useState([]); // 사업자 등록 번호 확인 결과
+    const [storeStatus, setStoreStatus] = useState(""); // 사업자 등록 번호 상태
+    
+    const [mail, setMail] = useState("")
+    const [mailMessage, setMailMessage] = useState("")
+    const [code, setCode] = useState("")
+    const [codeMessage, setCodeMessage] = useState("")  // 인증 메세지
+    const [mailStatus, setMailStatus] = useState("")    // 이메일 인증 상태
 
     // 파일 선택 시 미리보기 및 파일 저장
     const previewImage = (e) => {
@@ -115,20 +119,17 @@ const TestStory = () => {
 
     // 사업자 상태조회
     const confirmNumber = async () => {
-
         const basicInfo = {
             ads_id: storeNumber
         };
-
         try {
             const response = await axios.post(
                 `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/confirm/store`,
                 basicInfo
             );
-
             if (response.data) {
-                console.log(response.data);
-                setInfo(response.data.status_code);
+                setInfo(response.data.data);
+                setStoreStatus(response.data.status_code);
             } else {
                 console.error("비디오 생성 실패:", response.data);
             }
@@ -139,24 +140,18 @@ const TestStory = () => {
         }
     };
 
-    // 사업자 진위확인
-    const confirmTrueNumber = async () => {
-
+    // 이메일 인증 보내기
+    const sendMail = async () => {
         const basicInfo = {
-            b_no: storeNumber2,
-            start_dt: refDate,
-            p_nm : name
+            prompt: mail
         };
-
         try {
             const response = await axios.post(
-                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/confirm/true/store`,
+                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/send/mail`,
                 basicInfo
             );
-
             if (response.data) {
-                console.log(response.data.data);
-                setTrueInfo(response.data.data);
+                setMailMessage(response.data.message);
             } else {
                 console.error("비디오 생성 실패:", response.data);
             }
@@ -166,6 +161,40 @@ const TestStory = () => {
 
         }
     };
+
+    const confirmMail = async () => {
+        const basicInfo = {
+            prompt: mail,
+            ratio: code,
+        };
+    
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/confirm/mail`,
+                basicInfo
+            );
+    
+            if (response.data) {
+                const { success, message } = response.data;
+    
+                setCodeMessage(message); // 인증 코드 관련 메세지 보여주기
+    
+                // 인증 성공 여부에 따라 상태 설정
+                if (success) {
+                    setMailStatus("인증 성공");
+                } else {
+                    setMailStatus("인증 실패");
+                }
+            } else {
+                console.error("응답 데이터 없음:", response.data);
+            }
+        } catch (err) {
+            console.error("서버 오류 발생:", err);
+            setCodeMessage("서버 오류가 발생했습니다.");
+            setMailStatus("인증 실패");
+        }
+    };
+    
 
     return (
         <div>
@@ -282,13 +311,11 @@ const TestStory = () => {
                     <div className='pt-24'>
                         <div className='flex gap-8'>
                             <div>
-                                <p>예시</p>
-                                <p>사업자등록 번호 : 1138630615</p>
-                                <p>대표자 성명 : 정용관</p>
-                                <p>개업일자 : 20090622</p>
+
                             </div>
                             <div className='flex flex-col'>
                                 <h2>사업자 상태조회</h2>
+                                <p>사업자등록 번호 : 1138630615</p>
                                 <div className='pt-4'>
                                     <input
                                         type="text"
@@ -307,52 +334,67 @@ const TestStory = () => {
                                     </button>
                                 </div>
                                 <div>
-                                    {info}
+                                    {info.map((item, index) => (
+                                        <div key={index} className="p-3 ">
+                                            <p>유효성 코드: {item.b_stt_cd}</p>
+                                            <p>상태: {item.b_stt}</p>
+                                            <p>과세 유형: {item.tax_type}</p>
+                                            <p>확인 : {storeStatus}</p>
+                                        </div>
+                                    ))}
+
                                 </div>
                             </div>
                             <div className='flex flex-col'>
-                                <h2>사업자 진위확인</h2>
+                                <h2>이메일 인증</h2>
+                                <form onSubmit={(e) => {
+                                    e.preventDefault();
+                                    sendMail();
+                                }}>
+                                    <div className='pt-4 flex flex-col gap-2'>
+                                        <input
+                                            type="email"
+                                            placeholder="이메일을 입력하세요."
+                                            className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                            value={mail}
+                                            onChange={(e) => setMail(e.target.value)}
+                                            required
+                                        />
+                                    </div>
+                                    <div className='pt-4'>
+                                        <button
+                                            type="submit"
+                                            className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                        >
+                                            발송
+                                        </button>
+                                    </div>
+                                </form>
+                                <div className='pt-4'>
+                                    <p>{mailMessage}</p>
+                                </div>
+
                                 <div className='pt-4 flex flex-col gap-2'>
                                     <input
                                         type="text"
-                                        placeholder="사업자등록 번호"
+                                        placeholder="코드를 입력하세요"
                                         className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
-                                        value={storeNumber2}
-                                        onChange={(e) => setStoreNumber2(e.target.value)}
+                                        value={code}
+                                        onChange={(e) => setCode(e.target.value)}
                                     />
-                                    <input
-                                        type="text"
-                                        placeholder="대표자성명"
-                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="개업일자 - YYYYMMDD 형식"
-                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
-                                        value={refDate}
-                                        onChange={(e) => setRefDate(e.target.value)}
-                                    />
+
                                 </div>
                                 <div className='pt-4'>
                                     <button
                                         className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
-                                        onClick={confirmTrueNumber}
+                                        onClick={confirmMail}
                                     >
                                         확인
                                     </button>
                                 </div>
-                                <div>
-                                    {trueInfo.map((item, index) => (
-                                        <div key={index} className="p-3 border-b">
-                                            <p>유효성 코드: {item.valid}</p>
-                                            <p>상태: {item.status.b_stt}</p>
-                                            <p>과세 유형: {item.status.tax_type}</p>
-                                            <p>사업 종료일: {item.status.end_dt}</p>
-                                            <p>통합납세 적용 여부: {item.status.utcc_yn}</p>
-                                        </div>
-                                    ))}
+                                <div className='pt-4'>
+                                    <p>{mailStatus}</p>
+                                    <p>{codeMessage}</p>
                                 </div>
                             </div>
                         </div>
