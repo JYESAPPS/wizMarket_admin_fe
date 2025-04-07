@@ -6,6 +6,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination"; // pagination 스타일 추가
 import { Pagination, Navigation } from "swiper/modules"; // pagination 모듈 추가
+import GuideInsta from './Guide/GuideInsta';
+import GuideNaver from './Guide/GuideNaver';
+import 'swiper/css/navigation';
+
 
 
 const TestStory = () => {
@@ -19,16 +23,17 @@ const TestStory = () => {
     const [storyPrompt, setStoryPrompt] = useState(story || ""); // 초기값을 story로 설정
     const [storyImage, setStoryImage] = useState([]); // 스토리 생성된 이미지 URL
     const [imageLoading, setImageLoading] = useState(false); // 이미지 로딩 상태
-    
+
     const [storeNumber, setStoreNumber] = useState(""); // 사업자 등록 번호
     const [info, setInfo] = useState([]); // 사업자 등록 번호 확인 결과
     const [storeStatus, setStoreStatus] = useState(""); // 사업자 등록 번호 상태
-    
+
     const [mail, setMail] = useState("")
     const [mailMessage, setMailMessage] = useState("")
     const [code, setCode] = useState("")
     const [codeMessage, setCodeMessage] = useState("")  // 인증 메세지
     const [mailStatus, setMailStatus] = useState("")    // 이메일 인증 상태
+
 
     // 파일 선택 시 미리보기 및 파일 저장
     const previewImage = (e) => {
@@ -162,23 +167,24 @@ const TestStory = () => {
         }
     };
 
+    // 이메일 인증 확인
     const confirmMail = async () => {
         const basicInfo = {
             prompt: mail,
             ratio: code,
         };
-    
+
         try {
             const response = await axios.post(
                 `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/confirm/mail`,
                 basicInfo
             );
-    
+
             if (response.data) {
                 const { success, message } = response.data;
-    
+
                 setCodeMessage(message); // 인증 코드 관련 메세지 보여주기
-    
+
                 // 인증 성공 여부에 따라 상태 설정
                 if (success) {
                     setMailStatus("인증 성공");
@@ -194,7 +200,110 @@ const TestStory = () => {
             setMailStatus("인증 실패");
         }
     };
-    
+
+
+
+    // 크롤링 정보
+    const [instaGuide, setInstaGuide] = useState(false); // 크롤링 가이드
+    const [instaUser, setInstaUser] = useState(""); // 인스타 사용자
+    const [instaPost, setInstaPost] = useState(""); // 인스타 게시물 번호
+    const [instaImages, setInstaImages] = useState([]); // 인스타 이미지 URL
+    const [instaLike, setInstaLike] = useState('');
+    const [instaDate, setInstaDate] = useState('');
+
+    const [naverGuide, setNaverGuide] = useState(false); // 네이버 블로그 가이드
+    const [naverUser, setNaverUser] = useState(""); // 네이버 사용자
+    const [naverPost, setNaverPost] = useState(""); // 네이버 블로그 게시물 번호
+    const [naverTitle, setNaverTitle] = useState("")    // 네이버 블로그 제목
+    const [naverContent, setNaverContent] = useState("")    // 네이버 블로그 본문
+    const [naverImages, setNaverImages] = useState([])  // 네이버 이미지 URL
+    const [naverLike, setNaverLike] = useState("")      // 네이버 공감 수
+    const [naverView, setNaverView] = useState("")      // 네이버 해당 포스트 조회 수
+    const [naverComment, setNaverComment] = useState("")    // 네이버 댓글
+
+    // 인스타 가이드 보기/숨기기
+    const toggleInstaGuide = () => {
+        setInstaGuide((prev) => !prev);
+    };
+
+    // 네이버 가이드 보기/숨기기
+    const toggleNaverGuide = () => {
+        setNaverGuide((prev) => !prev);
+    };
+
+    // 인스타 정보 가져오기
+    const getInsta = async () => {
+
+        const user = instaUser || "xxxibgdrgn";
+        const post = instaPost || "DGfhEOjv-r4";
+
+        const basicInfo = {
+            prompt: user,
+            ratio: post,
+        };
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/get/insta`,
+                basicInfo
+            );
+            if (response.data) {
+                setInstaImages(response.data.img_url);
+                setInstaLike(response.data.like_count);
+                setInstaDate(response.data.formatted_time);
+            } else {
+                console.error("응답 데이터 없음:", response.data);
+            }
+        } catch (err) {
+            console.error("서버 오류 발생:", err);
+            setCodeMessage("서버 오류가 발생했습니다.");
+            setMailStatus("인증 실패");
+        }
+    };
+
+    // 인스타그램 게시물 확인하기
+    const confirmInsta = async () => {
+        const post = instaPost || "DGfhEOjv-r4";
+        const instaUrl = `https://www.instagram.com/p/${post}/`;
+        window.open(instaUrl, "_blank"); // 새 창 또는 새 탭으로 열기
+    };
+
+
+    // 네이버 정보 가져오기
+    const getNaver = async () => {
+
+        const user = naverUser || "tpals213";
+        const post = naverPost || "223824990635";
+
+        const basicInfo = {
+            prompt: user,
+            ratio: post,
+        };
+
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/get/naver`,
+                basicInfo
+            );
+            console.log("response", response.data);
+            if (response.data) {
+                setNaverTitle(response.data.title)
+                setNaverContent(response.data.content)
+                setNaverImages(response.data.img_url)
+                setNaverLike(response.data.like)
+                setNaverView(response.data.view ?? 0);
+                setNaverComment(response.data.comment)
+            } else {
+                console.error("응답 데이터 없음:", response.data);
+            }
+        } catch (err) {
+            console.error("서버 오류 발생:", err);
+            setCodeMessage("서버 오류가 발생했습니다.");
+            setMailStatus("인증 실패");
+        }
+    };
+
+
+
 
     return (
         <div>
@@ -310,9 +419,6 @@ const TestStory = () => {
                     </div>
                     <div className='pt-24'>
                         <div className='flex gap-8'>
-                            <div>
-
-                            </div>
                             <div className='flex flex-col'>
                                 <h2>사업자 상태조회</h2>
                                 <p>사업자등록 번호 : 1138630615</p>
@@ -395,6 +501,218 @@ const TestStory = () => {
                                 <div className='pt-4'>
                                     <p>{mailStatus}</p>
                                     <p>{codeMessage}</p>
+                                </div>
+                            </div>
+                            {/* 인스타그램 피드 가져오기 */}
+                            <div className='flex flex-col'>
+                                <h2>인스타 피드 가져오기</h2>
+                                <div className="flex items-center gap-2 pb-2">
+                                    <p className="text-lg font-medium">가이드 보기</p>
+                                    <button
+                                        onClick={toggleInstaGuide}
+                                        className="text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                                    >
+                                        {instaGuide ? "접기" : "펼치기"}
+                                    </button>
+                                </div>
+                                {instaGuide && (
+                                    <div className="p-2 bg-gray-100 rounded text-sm text-gray-800">
+                                        <GuideInsta />
+                                    </div>
+                                )}
+
+                                <div className='pt-4 flex flex-col gap-2'>
+                                    <input
+                                        type="text"
+                                        placeholder="기본값 : xxxibgdrgn"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={instaUser}
+                                        onChange={(e) => setInstaUser(e.target.value)}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="기본값 : DGfhEOjv-r4"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={instaPost}
+                                        onChange={(e) => setInstaPost(e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className='pt-4'>
+                                    <button
+                                        onClick={getInsta}
+                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                    >
+                                        찾기
+                                    </button>
+                                </div>
+
+                                <div className='pt-4'>
+                                    <Swiper
+                                        modules={[Navigation, Pagination]}
+                                        navigation
+                                        pagination={{ clickable: true }}
+                                        spaceBetween={30}
+                                        slidesPerView={1}
+                                        className="max-w-[200px] mt-4"
+
+                                    >
+                                        {instaImages.map((image, index) => (
+                                            <SwiperSlide key={index}>
+                                                <img
+                                                    src={`data:image/jpeg;base64,${image}`}
+                                                    alt={`Generated ${index + 1}`} // "Image" 대신 의미 있는 설명으로 대체
+                                                    className="max-w-[200px] rounded-md shadow-md"
+                                                />
+                                            </SwiperSlide>
+                                        ))}
+                                    </Swiper>
+                                    <p>좋아요 수 : {instaLike}</p>
+                                    <p>게시물 날짜 : {instaDate}</p>
+                                </div>
+
+
+                                <div className='pt-4'>
+                                    <button
+                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                        onClick={confirmInsta}
+                                    >
+                                        확인해보기
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className='flex flex-col'>
+                                <h2>인스타 릴스 가져오기 (개발중)</h2>
+                                <div className='pt-4 flex flex-col gap-2'>
+                                    <input
+                                        type="text"
+                                        placeholder="기본값 : xxxibgdrgn"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={instaUser}
+                                        onChange={(e) => setInstaUser(e.target.value)}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="기본값 : DGfhEOjv-r4"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={instaPost}
+                                        onChange={(e) => setInstaPost(e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className='pt-4'>
+                                    <button
+                                        onClick={getInsta}
+                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                    >
+                                        찾기
+                                    </button>
+                                </div>
+
+                                <div className='pt-4'>
+
+                                    <p>좋아요 수 : {instaLike}</p>
+                                    <p>게시물 날짜 : {instaDate}</p>
+                                </div>
+
+
+                                <div className='pt-4'>
+                                    <button
+                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                        onClick={confirmInsta}
+                                    >
+                                        확인해보기
+                                    </button>
+                                </div>
+                            </div>
+
+
+                            {/* 네이버 블로그 가져오기 */}
+                            <div className='flex flex-col'>
+                                <h2>네이버 블로그 가져오기</h2>
+                                <div className="flex items-center gap-2 pb-2">
+                                    <p className="text-lg font-medium">가이드 보기</p>
+                                    <button
+                                        onClick={toggleNaverGuide}
+                                        className="text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                                    >
+                                        {naverGuide ? "접기" : "펼치기"}
+                                    </button>
+                                </div>
+                                {naverGuide && (
+                                    <div className="p-2 bg-gray-100 rounded text-sm text-gray-800">
+                                        <GuideNaver />
+                                    </div>
+                                )}
+
+                                <div className='pt-4 flex flex-col gap-2'>
+                                    <input
+                                        type="text"
+                                        placeholder="기본값 : xxxibgdrgn"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={naverUser}
+                                        onChange={(e) => setNaverUser(e.target.value)}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="기본값 : DGfhEOjv-r4"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={naverPost}
+                                        onChange={(e) => setNaverPost(e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className='pt-4'>
+                                    <button
+                                        onClick={getNaver}
+                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                    >
+                                        찾기
+                                    </button>
+                                </div>
+
+                                <div className='pt-4'>
+                                    {/* <Swiper
+                                        modules={[Navigation, Pagination]}
+                                        navigation
+                                        pagination={{ clickable: true }}
+                                        spaceBetween={30}
+                                        slidesPerView={1}
+                                        className="max-w-[200px] mt-4"
+
+                                    >
+                                        {naverImages.map((image, index) => (
+                                            <SwiperSlide key={index}>
+                                                <img
+                                                    src={`data:image/jpeg;base64,${image}`}
+                                                    alt={`Generated ${index + 1}`} // "Image" 대신 의미 있는 설명으로 대체
+                                                    className="max-w-[200px] rounded-md shadow-md"
+                                                />
+                                            </SwiperSlide>
+                                        ))}
+                                    </Swiper> */}
+                                    <p>공감 수 : {naverLike}</p>
+                                    <p>제목 : {naverTitle}</p>
+                                    <p>내용 : {naverContent}</p>
+                                    <p>댓글 : {naverComment}</p>
+                                    <p>오늘 하루 조회 수 : {naverView}</p>
+                                </div>
+
+
+                                <div className='pt-4'>
+                                    <button
+                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                        onClick={confirmInsta}
+                                    >
+                                        확인해보기
+                                    </button>
                                 </div>
                             </div>
                         </div>
