@@ -232,7 +232,7 @@ const TestStory = () => {
 
     // 인스타 피드 정보 가져오기
     const getInstaFeed = async () => {
-        setInstaLoading(false)
+        setInstaLoading(true)
         const user = instaUser || "xxxibgdrgn";
         const post = instaPost || "DGfhEOjv-r4";
 
@@ -298,7 +298,7 @@ const TestStory = () => {
             setMailStatus("인증 실패");
         }
         finally{
-            naverLoading(false)
+            setNaverLoading(false)
         }
     };
 
@@ -551,7 +551,7 @@ const TestStory = () => {
                                             onClick={getInstaFeed}
                                             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all"
                                         >
-                                            생성
+                                            가져오기
                                         </button>
                                     )}
                                 </div>
@@ -571,9 +571,6 @@ const TestStory = () => {
                                     </button>
                                 </div>
                             </div>
-
-                            
-
 
                             {/* 네이버 블로그 가져오기 */}
                             <div className='flex flex-col'>
@@ -622,7 +619,7 @@ const TestStory = () => {
                                             onClick={getNaver}
                                             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all"
                                         >
-                                            생성
+                                            가져오기
                                         </button>
                                     )}
                                 </div>
