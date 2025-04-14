@@ -208,6 +208,7 @@ const TestStory = () => {
     const [instaUser, setInstaUser] = useState(""); // 인스타 사용자
     const [instaPost, setInstaPost] = useState(""); // 인스타 게시물 번호
 
+    const [instaLoading, setInstaLoading] = useState(false)
     const [instaLike, setInstaLike] = useState(''); // 인스타 피드 좋아요 수
     const [instaComment, setInstaComment] = useState('');   // 인스타 피드 댓글 수
 
@@ -215,8 +216,8 @@ const TestStory = () => {
     const [naverUser, setNaverUser] = useState(""); // 네이버 사용자
     const [naverPost, setNaverPost] = useState(""); // 네이버 블로그 게시물 번호
 
+    const [naverLoading, setNaverLoading] = useState(false)
     const [naverLike, setNaverLike] = useState("")      // 네이버 공감 수
-    const [naverView, setNaverView] = useState("")      // 네이버 해당 포스트 조회 수
     const [naverComment, setNaverComment] = useState("")    // 네이버 댓글 수
 
     // 인스타 가이드 보기/숨기기
@@ -231,7 +232,7 @@ const TestStory = () => {
 
     // 인스타 피드 정보 가져오기
     const getInstaFeed = async () => {
-
+        setInstaLoading(false)
         const user = instaUser || "xxxibgdrgn";
         const post = instaPost || "DGfhEOjv-r4";
 
@@ -255,6 +256,9 @@ const TestStory = () => {
             setCodeMessage("서버 오류가 발생했습니다.");
             setMailStatus("인증 실패");
         }
+        finally{
+            setInstaLoading(false)
+        }
     };
 
     // 인스타그램 게시물 확인하기
@@ -267,6 +271,7 @@ const TestStory = () => {
 
     // 네이버 정보 가져오기
     const getNaver = async () => {
+        setNaverLoading(true)
 
         const user = naverUser || "tpals213";
         const post = naverPost || "223824990635";
@@ -281,10 +286,8 @@ const TestStory = () => {
                 `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/get/naver`,
                 basicInfo
             );
-            console.log("response", response.data);
             if (response.data) {
                 setNaverLike(response.data.like)
-                setNaverView(response.data.view ?? 0);
                 setNaverComment(response.data.comment)
             } else {
                 console.error("응답 데이터 없음:", response.data);
@@ -293,6 +296,9 @@ const TestStory = () => {
             console.error("서버 오류 발생:", err);
             setCodeMessage("서버 오류가 발생했습니다.");
             setMailStatus("인증 실패");
+        }
+        finally{
+            naverLoading(false)
         }
     };
 
@@ -536,12 +542,18 @@ const TestStory = () => {
                                 </div>
 
                                 <div className='pt-4'>
-                                    <button
-                                        onClick={getInstaFeed}
-                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
-                                    >
-                                        찾기
-                                    </button>
+                                    {instaLoading ? (
+                                        // 스피너 표시
+                                        <div className="w-6 h-6 border-4 border-blue-500 border-solid border-t-transparent rounded-full animate-spin"></div>
+                                    ) : (
+                                        // 버튼 표시
+                                        <button
+                                            onClick={getInstaFeed}
+                                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all"
+                                        >
+                                            생성
+                                        </button>
+                                    )}
                                 </div>
 
                                 <div className='pt-4'>
@@ -601,18 +613,23 @@ const TestStory = () => {
                                 </div>
 
                                 <div className='pt-4'>
-                                    <button
-                                        onClick={getNaver}
-                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
-                                    >
-                                        찾기
-                                    </button>
+                                    {naverLoading ? (
+                                        // 스피너 표시
+                                        <div className="w-6 h-6 border-4 border-blue-500 border-solid border-t-transparent rounded-full animate-spin"></div>
+                                    ) : (
+                                        // 버튼 표시
+                                        <button
+                                            onClick={getNaver}
+                                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all"
+                                        >
+                                            생성
+                                        </button>
+                                    )}
                                 </div>
 
                                 <div className='pt-4'>
                                     <p>공감 수 : {naverLike}</p>
                                     <p>댓글 : {naverComment}</p>
-                                    <p>오늘 하루 조회 수 : {naverView}</p>
                                 </div>
 
 
