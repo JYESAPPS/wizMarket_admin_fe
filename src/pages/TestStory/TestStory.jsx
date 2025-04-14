@@ -629,7 +629,7 @@ const TestStory = () => {
 
                             {/* 인스타그램 릴스 가져오기 */}
                             <div className='flex flex-col'>
-                                <h2>인스타 릴스 가져오기</h2>
+                                <h2>인스타 릴스 가져오기(테스트 중)</h2>
 
                                 <div className='pt-4 flex flex-col gap-2'>
                                     <input
