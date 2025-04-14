@@ -207,19 +207,17 @@ const TestStory = () => {
     const [instaGuide, setInstaGuide] = useState(false); // 크롤링 가이드
     const [instaUser, setInstaUser] = useState(""); // 인스타 사용자
     const [instaPost, setInstaPost] = useState(""); // 인스타 게시물 번호
-    const [instaImages, setInstaImages] = useState([]); // 인스타 이미지 URL
-    const [instaLike, setInstaLike] = useState('');
-    const [instaDate, setInstaDate] = useState('');
+
+    const [instaLike, setInstaLike] = useState(''); // 인스타 피드 좋아요 수
+    const [instaComment, setInstaComment] = useState('');   // 인스타 피드 댓글 수
 
     const [naverGuide, setNaverGuide] = useState(false); // 네이버 블로그 가이드
     const [naverUser, setNaverUser] = useState(""); // 네이버 사용자
     const [naverPost, setNaverPost] = useState(""); // 네이버 블로그 게시물 번호
-    const [naverTitle, setNaverTitle] = useState("")    // 네이버 블로그 제목
-    const [naverContent, setNaverContent] = useState("")    // 네이버 블로그 본문
-    const [naverImages, setNaverImages] = useState([])  // 네이버 이미지 URL
+
     const [naverLike, setNaverLike] = useState("")      // 네이버 공감 수
     const [naverView, setNaverView] = useState("")      // 네이버 해당 포스트 조회 수
-    const [naverComment, setNaverComment] = useState("")    // 네이버 댓글
+    const [naverComment, setNaverComment] = useState("")    // 네이버 댓글 수
 
     // 인스타 가이드 보기/숨기기
     const toggleInstaGuide = () => {
@@ -231,8 +229,8 @@ const TestStory = () => {
         setNaverGuide((prev) => !prev);
     };
 
-    // 인스타 정보 가져오기
-    const getInsta = async () => {
+    // 인스타 피드 정보 가져오기
+    const getInstaFeed = async () => {
 
         const user = instaUser || "xxxibgdrgn";
         const post = instaPost || "DGfhEOjv-r4";
@@ -247,9 +245,8 @@ const TestStory = () => {
                 basicInfo
             );
             if (response.data) {
-                setInstaImages(response.data.img_url);
                 setInstaLike(response.data.like_count);
-                setInstaDate(response.data.formatted_time);
+                setInstaComment(response.data.comment_count);
             } else {
                 console.error("응답 데이터 없음:", response.data);
             }
@@ -286,9 +283,6 @@ const TestStory = () => {
             );
             console.log("response", response.data);
             if (response.data) {
-                setNaverTitle(response.data.title)
-                setNaverContent(response.data.content)
-                setNaverImages(response.data.img_url)
                 setNaverLike(response.data.like)
                 setNaverView(response.data.view ?? 0);
                 setNaverComment(response.data.comment)
@@ -313,7 +307,7 @@ const TestStory = () => {
                     <Aside />
                 </dir>
 
-                <main className="flex flex-col gap-4 min-h-screen p-4 overflow-x-hidden">
+                <main className="flex flex-col gap-4 min-h-screen p-4">
                     {/* 상단 텍스트 */}
                     <section className="w-full text-center">
                         <h4 className=''>GPT로 이미지 스토리텔링 테스트</h4>
@@ -503,6 +497,7 @@ const TestStory = () => {
                                     <p>{codeMessage}</p>
                                 </div>
                             </div>
+                            
                             {/* 인스타그램 피드 가져오기 */}
                             <div className='flex flex-col'>
                                 <h2>인스타 피드 가져오기</h2>
@@ -542,7 +537,7 @@ const TestStory = () => {
 
                                 <div className='pt-4'>
                                     <button
-                                        onClick={getInsta}
+                                        onClick={getInstaFeed}
                                         className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
                                     >
                                         찾기
@@ -550,27 +545,8 @@ const TestStory = () => {
                                 </div>
 
                                 <div className='pt-4'>
-                                    <Swiper
-                                        modules={[Navigation, Pagination]}
-                                        navigation
-                                        pagination={{ clickable: true }}
-                                        spaceBetween={30}
-                                        slidesPerView={1}
-                                        className="max-w-[200px] mt-4"
-
-                                    >
-                                        {instaImages.map((image, index) => (
-                                            <SwiperSlide key={index}>
-                                                <img
-                                                    src={`data:image/jpeg;base64,${image}`}
-                                                    alt={`Generated ${index + 1}`} // "Image" 대신 의미 있는 설명으로 대체
-                                                    className="max-w-[200px] rounded-md shadow-md"
-                                                />
-                                            </SwiperSlide>
-                                        ))}
-                                    </Swiper>
                                     <p>좋아요 수 : {instaLike}</p>
-                                    <p>게시물 날짜 : {instaDate}</p>
+                                    <p>댓글 수 : {instaComment}</p>
                                 </div>
 
 
@@ -584,52 +560,7 @@ const TestStory = () => {
                                 </div>
                             </div>
 
-                            <div className='flex flex-col'>
-                                <h2>인스타 릴스 가져오기 (개발중)</h2>
-                                <div className='pt-4 flex flex-col gap-2'>
-                                    <input
-                                        type="text"
-                                        placeholder="기본값 : xxxibgdrgn"
-                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
-                                        value={instaUser}
-                                        onChange={(e) => setInstaUser(e.target.value)}
-                                        required
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="기본값 : DGfhEOjv-r4"
-                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
-                                        value={instaPost}
-                                        onChange={(e) => setInstaPost(e.target.value)}
-                                        required
-                                    />
-                                </div>
-
-                                <div className='pt-4'>
-                                    <button
-                                        onClick={getInsta}
-                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
-                                    >
-                                        찾기
-                                    </button>
-                                </div>
-
-                                <div className='pt-4'>
-
-                                    <p>좋아요 수 : {instaLike}</p>
-                                    <p>게시물 날짜 : {instaDate}</p>
-                                </div>
-
-
-                                <div className='pt-4'>
-                                    <button
-                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
-                                        onClick={confirmInsta}
-                                    >
-                                        확인해보기
-                                    </button>
-                                </div>
-                            </div>
+                            
 
 
                             {/* 네이버 블로그 가져오기 */}
@@ -653,7 +584,7 @@ const TestStory = () => {
                                 <div className='pt-4 flex flex-col gap-2'>
                                     <input
                                         type="text"
-                                        placeholder="기본값 : xxxibgdrgn"
+                                        placeholder="아이디 기본값 : tpals213"
                                         className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
                                         value={naverUser}
                                         onChange={(e) => setNaverUser(e.target.value)}
@@ -661,7 +592,7 @@ const TestStory = () => {
                                     />
                                     <input
                                         type="text"
-                                        placeholder="기본값 : DGfhEOjv-r4"
+                                        placeholder="게시물 번호 기본값 : 223824990635"
                                         className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
                                         value={naverPost}
                                         onChange={(e) => setNaverPost(e.target.value)}
@@ -679,28 +610,7 @@ const TestStory = () => {
                                 </div>
 
                                 <div className='pt-4'>
-                                    {/* <Swiper
-                                        modules={[Navigation, Pagination]}
-                                        navigation
-                                        pagination={{ clickable: true }}
-                                        spaceBetween={30}
-                                        slidesPerView={1}
-                                        className="max-w-[200px] mt-4"
-
-                                    >
-                                        {naverImages.map((image, index) => (
-                                            <SwiperSlide key={index}>
-                                                <img
-                                                    src={`data:image/jpeg;base64,${image}`}
-                                                    alt={`Generated ${index + 1}`} // "Image" 대신 의미 있는 설명으로 대체
-                                                    className="max-w-[200px] rounded-md shadow-md"
-                                                />
-                                            </SwiperSlide>
-                                        ))}
-                                    </Swiper> */}
                                     <p>공감 수 : {naverLike}</p>
-                                    <p>제목 : {naverTitle}</p>
-                                    <p>내용 : {naverContent}</p>
                                     <p>댓글 : {naverComment}</p>
                                     <p>오늘 하루 조회 수 : {naverView}</p>
                                 </div>
