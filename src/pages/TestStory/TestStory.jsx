@@ -8,6 +8,7 @@ import "swiper/css/pagination"; // pagination 스타일 추가
 import { Pagination, Navigation } from "swiper/modules"; // pagination 모듈 추가
 import GuideInsta from './Guide/GuideInsta';
 import GuideNaver from './Guide/GuideNaver';
+import GuideBand from './Guide/GuideBand';
 import 'swiper/css/navigation';
 
 
@@ -212,6 +213,14 @@ const TestStory = () => {
     const [instaLike, setInstaLike] = useState(''); // 인스타 피드 좋아요 수
     const [instaComment, setInstaComment] = useState('');   // 인스타 피드 댓글 수
 
+    const [reelUser, setReelUser] = useState("")
+    const [reelPost, setReelPost] = useState("")
+
+    const [reelLoading, setReelLoading] = useState(false)
+    const [reelLike, setReelLike] = useState("")
+    const [reelComment, setReelComment] = useState("")
+    const [reelView, setReelView] = useState("")
+
     const [naverGuide, setNaverGuide] = useState(false); // 네이버 블로그 가이드
     const [naverUser, setNaverUser] = useState(""); // 네이버 사용자
     const [naverPost, setNaverPost] = useState(""); // 네이버 블로그 게시물 번호
@@ -219,6 +228,8 @@ const TestStory = () => {
     const [naverLoading, setNaverLoading] = useState(false)
     const [naverLike, setNaverLike] = useState("")      // 네이버 공감 수
     const [naverComment, setNaverComment] = useState("")    // 네이버 댓글 수
+
+    const [bandGuide, setBandGuide] = useState(false)
 
     // 인스타 가이드 보기/숨기기
     const toggleInstaGuide = () => {
@@ -228,6 +239,11 @@ const TestStory = () => {
     // 네이버 가이드 보기/숨기기
     const toggleNaverGuide = () => {
         setNaverGuide((prev) => !prev);
+    };
+
+    // 네이버 밴드 보기/숨기기
+    const toggleBandGuide = () => {
+        setBandGuide((prev) => !prev);
     };
 
     // 인스타 피드 정보 가져오기
@@ -268,6 +284,36 @@ const TestStory = () => {
         window.open(instaUrl, "_blank"); // 새 창 또는 새 탭으로 열기
     };
 
+    // 인스타 릴스 정보 가져오기
+    const getInstaReel = async () => {
+        setReelLoading(true)
+        const user = reelUser || "xxxibgdrgn";
+        const post = reelPost || "DGfhEOjv-r4";
+
+        const basicInfo = {
+            prompt: user,
+            ratio: post,
+        };
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/get/reel`,
+                basicInfo
+            );
+            if (response.data) {
+                setReelLike(response.data.like_count);
+                setReelComment(response.data.comment_count);
+                setReelView(response.data.view_count)
+            } else {
+                console.error("응답 데이터 없음:", response.data);
+            }
+        } catch (err) {
+            console.error("서버 오류 발생:", err);
+        }
+        finally{
+            setReelLoading(false)
+        }
+    };
+
 
     // 네이버 정보 가져오기
     const getNaver = async () => {
@@ -300,6 +346,15 @@ const TestStory = () => {
         finally{
             setNaverLoading(false)
         }
+    };
+
+    // 네이버 블로그 확인하기
+    const confirmNaver = async () => {
+        const post = instaPost || "223824990635";
+        const user = naverUser || "tpals213"
+
+        const instaUrl = `https://blog.naver.com/${user}/${post}`;
+        window.open(instaUrl, "_blank"); // 새 창 또는 새 탭으로 열기
     };
 
 
@@ -572,6 +627,61 @@ const TestStory = () => {
                                 </div>
                             </div>
 
+                            {/* 인스타그램 릴스 가져오기 */}
+                            <div className='flex flex-col'>
+                                <h2>인스타 릴스 가져오기</h2>
+
+                                <div className='pt-4 flex flex-col gap-2'>
+                                    <input
+                                        type="text"
+                                        placeholder="기본값 : xxxibgdrgn"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={reelUser}
+                                        onChange={(e) => setReelUser(e.target.value)}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="기본값 : DGfhEOjv-r4"
+                                        className="border-2 border-black p-3 overflow-auto resize-none whitespace-pre-line"
+                                        value={reelPost}
+                                        onChange={(e) => setReelPost(e.target.value)}
+                                        required
+                                    />
+                                </div>
+
+                                <div className='pt-4'>
+                                    {reelLoading ? (
+                                        // 스피너 표시
+                                        <div className="w-6 h-6 border-4 border-blue-500 border-solid border-t-transparent rounded-full animate-spin"></div>
+                                    ) : (
+                                        // 버튼 표시
+                                        <button
+                                            onClick={getInstaReel}
+                                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all"
+                                        >
+                                            가져오기
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className='pt-4'>
+                                    <p>조회 수 : {reelView}</p>
+                                    <p>좋아요 수 : {reelLike}</p>
+                                    <p>댓글 수 : {reelComment}</p>
+                                </div>
+
+
+                                <div className='pt-4'>
+                                    <button
+                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                        onClick={confirmNaver}
+                                    >
+                                        확인해보기
+                                    </button>
+                                </div>
+                            </div>
+
                             {/* 네이버 블로그 가져오기 */}
                             <div className='flex flex-col'>
                                 <h2>네이버 블로그 가져오기</h2>
@@ -633,11 +743,30 @@ const TestStory = () => {
                                 <div className='pt-4'>
                                     <button
                                         className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
-                                        onClick={confirmInsta}
+                                        onClick={confirmNaver}
                                     >
                                         확인해보기
                                     </button>
                                 </div>
+                            </div>
+
+                            {/* 네이버 밴드 가져오기 */}
+                            <div className='flex flex-col'>
+                                <h2>네이버 밴드 가져오기</h2>
+                                <div className="flex items-center gap-2 pb-2">
+                                    <p className="text-lg font-medium">가이드 보기</p>
+                                    <button
+                                        onClick={toggleBandGuide}
+                                        className="text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                                    >
+                                        {bandGuide ? "접기" : "펼치기"}
+                                    </button>
+                                </div>
+                                {bandGuide && (
+                                    <div className="p-2 bg-gray-100 rounded text-sm text-gray-800">
+                                        <GuideBand />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
