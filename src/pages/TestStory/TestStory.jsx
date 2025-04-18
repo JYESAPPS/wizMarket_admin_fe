@@ -213,13 +213,13 @@ const TestStory = () => {
     const [instaLike, setInstaLike] = useState(''); // 인스타 피드 좋아요 수
     const [instaComment, setInstaComment] = useState('');   // 인스타 피드 댓글 수
 
-    const [reelUser, setReelUser] = useState("")
-    const [reelPost, setReelPost] = useState("")
+    // const [reelUser, setReelUser] = useState("")
+    // const [reelPost, setReelPost] = useState("")
 
-    const [reelLoading, setReelLoading] = useState(false)
-    const [reelLike, setReelLike] = useState("")
-    const [reelComment, setReelComment] = useState("")
-    const [reelView, setReelView] = useState("")
+    // const [reelLoading, setReelLoading] = useState(false)
+    // const [reelLike, setReelLike] = useState("")
+    // const [reelComment, setReelComment] = useState("")
+    // const [reelView, setReelView] = useState("")
 
     const [naverGuide, setNaverGuide] = useState(false); // 네이버 블로그 가이드
     const [naverUser, setNaverUser] = useState(""); // 네이버 사용자
@@ -285,34 +285,34 @@ const TestStory = () => {
     };
 
     // 인스타 릴스 정보 가져오기
-    const getInstaReel = async () => {
-        setReelLoading(true)
-        const user = reelUser || "xxxibgdrgn";
-        const post = reelPost || "DGfhEOjv-r4";
+    // const getInstaReel = async () => {
+    //     setReelLoading(true)
+    //     const user = reelUser || "xxxibgdrgn";
+    //     const post = reelPost || "DGfhEOjv-r4";
 
-        const basicInfo = {
-            prompt: user,
-            ratio: post,
-        };
-        try {
-            const response = await axios.post(
-                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/get/reel`,
-                basicInfo
-            );
-            if (response.data) {
-                setReelLike(response.data.like_count);
-                setReelComment(response.data.comment_count);
-                setReelView(response.data.view_count)
-            } else {
-                console.error("응답 데이터 없음:", response.data);
-            }
-        } catch (err) {
-            console.error("서버 오류 발생:", err);
-        }
-        finally{
-            setReelLoading(false)
-        }
-    };
+    //     const basicInfo = {
+    //         prompt: user,
+    //         ratio: post,
+    //     };
+    //     try {
+    //         const response = await axios.post(
+    //             `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/get/reel`,
+    //             basicInfo
+    //         );
+    //         if (response.data) {
+    //             setReelLike(response.data.like_count);
+    //             setReelComment(response.data.comment_count);
+    //             setReelView(response.data.view_count)
+    //         } else {
+    //             console.error("응답 데이터 없음:", response.data);
+    //         }
+    //     } catch (err) {
+    //         console.error("서버 오류 발생:", err);
+    //     }
+    //     finally{
+    //         setReelLoading(false)
+    //     }
+    // };
 
 
     // 네이버 정보 가져오기
@@ -628,7 +628,7 @@ const TestStory = () => {
                             </div>
 
                             {/* 인스타그램 릴스 가져오기 */}
-                            <div className='flex flex-col'>
+                            {/* <div className='flex flex-col'>
                                 <h2>인스타 릴스 가져오기(테스트 중)</h2>
 
                                 <div className='pt-4 flex flex-col gap-2'>
@@ -680,7 +680,7 @@ const TestStory = () => {
                                         확인해보기
                                     </button>
                                 </div>
-                            </div>
+                            </div> */}
 
                             {/* 네이버 블로그 가져오기 */}
                             <div className='flex flex-col'>

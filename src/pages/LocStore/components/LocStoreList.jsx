@@ -103,7 +103,7 @@ const LocStoreList = ({ data }) => {
     const handleModalClick = (event, storeBusinessNumber) => {
         event.preventDefault();
 
-        const ADS_URL = `${process.env.REACT_APP_ADS_LOGIN}`;
+        const ADS_URL = `${process.env.REACT_APP_ADS_LOGIN}/ads/login/${storeBusinessNumber}`;
         const width = 400;
         const height = 874;
         const left = window.screenX + (window.innerWidth / 4) * 2 + (window.innerWidth / 4 - width) / 2;
