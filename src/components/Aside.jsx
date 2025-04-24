@@ -167,6 +167,9 @@ const Aside = () => {
                                 <Link to="/test/draw/image">이미지 테스트</Link>
                             </li>
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
+                                <Link to="/test/edit/image">이미지 편집 테스트</Link>
+                            </li>
+                            <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
                                 <Link to="/test/story">이미지 스토리 테스트</Link>
                             </li>
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
