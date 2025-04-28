@@ -150,7 +150,7 @@ const LocStoreList = ({ data }) => {
     if (!data || data.length === 0) {
         return <p>데이터가 없습니다.</p>;
     }
-
+    // 테스트 주석
     return (
         <div>
             <div className="w-full overflow-x-auto">
