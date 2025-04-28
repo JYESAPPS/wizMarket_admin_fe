@@ -157,7 +157,7 @@ const LocStoreList = ({ data }) => {
                 <div className="w-full hidden sm:block">
                     <DataLengthDown data={data} filename="loc_store.xlsx" />
                 </div>
-                <p className='mb-4'>기준 : {data[0]?.local_year || "정보 없음"}년 {data[0]?.local_quarter || "정보 없음"}분기</p>
+                <p className='pb-4'>기준 : {data[0]?.local_year || "정보 없음"}년 {data[0]?.local_quarter || "정보 없음"}분기</p>
                 <table className="min-w-full border-collapse border border-gray-200 text-sm truncate p-4">
                     <thead className="sm:bg-gray-200">
                         <tr>
