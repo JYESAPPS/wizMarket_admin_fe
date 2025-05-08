@@ -17,7 +17,9 @@ const TestDrawImage = () => {
     const [dallePrompt, setDallePrompt] = useState('');
     const [dalleImage, setDalleImage] = useState([]);
     const [dalleLoading, setDalleLoading] = useState(false);
-    const [dalleRatio, setDalleRatio] = useState('9:16');
+    const [dalleRatio, setDalleRatio] = useState('');
+    const [dalleVer, setDalleVer] = useState('');
+    const [selectDalleImage, setSelectDalleImage] = useState(0);
 
     const [midPrompt, setMidPrompt] = useState('');
     const [midImage, setMidImage] = useState([]);
@@ -95,6 +97,7 @@ const TestDrawImage = () => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/generate/image/dalle`, {
                 prompt: dallePrompt,
+                version: dalleVer,
                 ratio: dalleRatio
             }, {
                 headers: {
@@ -102,44 +105,57 @@ const TestDrawImage = () => {
                 },
             });
             setDalleLoading(false);
-            setDalleImage(response.data.image);
+            setDalleImage(response.data.images);
         } catch (err) {
             console.error('Error generating image:', err);
             setDalleLoading(false);
         }
     };
 
+    const handleDalleSlideChange = (swiper) => {
+        setSelectDalleImage(swiper.activeIndex);
+    };
+
     const downDalle = async () => {
+        if (!dalleImage || dalleImage.length === 0) {
+            alert("다운로드할 이미지가 없습니다.");
+            return;
+        }
+
+        const imageUrl = dalleImage[selectDalleImage]; // ✅ 현재 보고 있는 이미지
+        console.log("다운로드할 이미지 URL:", imageUrl);
+
+        // 📌 UUID 생성
+        const uuid = uuidv4().split("-")[0]; // 짧은 UUID
+
+        // 📌 파일명 설정: SD_YYYYMMDD_UUID.png
+        const fileName = `DL_${getFormattedDate()}_${uuid}.png`;
+
         try {
-            if (!dalleImage || dalleImage.length === 0) {
-                alert("다운로드할 이미지가 없습니다.");
+            const response = await fetch(imageUrl);
+            if (!response.ok) {
+                alert("이미지를 가져오는 데 실패했습니다.");
                 return;
             }
-            // 📌 UUID 생성
-            const uuid = uuidv4().split("-")[0]; // 짧은 UUID
 
-            // 📌 파일명 설정: SD_YYYYMMDD_UUID.png
-            const fileName = `DL_${getFormattedDate()}_${uuid}.png`;
-
-            // 📌 이미지 다운로드 처리
-            const response = await fetch(dalleImage);
             const blob = await response.blob();
             const blobUrl = window.URL.createObjectURL(blob);
 
-            // 📌 가짜 `<a>` 태그를 생성하여 클릭 이벤트 트리거
             const a = document.createElement("a");
             a.href = blobUrl;
             a.download = fileName;
             document.body.appendChild(a);
             a.click();
 
-            // 📌 다운로드 후 URL 해제
             document.body.removeChild(a);
             window.URL.revokeObjectURL(blobUrl);
         } catch (error) {
             console.error("이미지 다운로드 중 오류 발생:", error);
+            alert("이미지 다운로드 중 오류가 발생했습니다.");
         }
     };
+
+
 
     const generateMid = async () => {
         setMidLoading(true);
@@ -174,7 +190,7 @@ const TestDrawImage = () => {
     const handleMidSlideChange = (swiper) => {
         setSelectMidImage(swiper.activeIndex);
     };
-    
+
     const downMid = async () => {
         if (!midImage || midImage.length === 0) {
             alert("다운로드할 이미지가 없습니다.");
@@ -350,13 +366,36 @@ const TestDrawImage = () => {
                                     <h4 className='pr-2'>Dalle</h4>
                                     <select
                                         className="p-2 border rounded-md"
+                                        value={dalleVer}
+                                        onChange={(e) => setDalleVer(e.target.value)}
+                                    >
+                                        <option value="">버전</option>
+                                        <option value="new">new</option>
+                                        <option value="dalle">dalle-3</option>
+                                    </select>
+
+                                    <select
+                                        className="p-2 border rounded-md"
                                         value={dalleRatio}
                                         onChange={(e) => setDalleRatio(e.target.value)}
                                     >
-                                        <option value="1:1">1:1</option>
-                                        <option value="16:9">16:9</option>
-                                        <option value="9:16">9:16</option>
+                                        {dalleVer === "new" ? (
+                                            <>
+                                                <option value="">비율 선택</option>
+                                                <option value="1:1">1:1</option>
+                                                <option value="3:2">3:2</option>
+                                                <option value="2:3">2:3</option>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <option value="">비율 선택</option>
+                                                <option value="1:1">1:1</option>
+                                                <option value="16:9">16:9</option>
+                                                <option value="9:16">9:16</option>
+                                            </>
+                                        )}
                                     </select>
+
                                 </section>
                                 <section className="items-center w-full">
                                     <textarea
@@ -383,11 +422,27 @@ const TestDrawImage = () => {
                             </div>
                             {/* Dalle 이미지 영역 */}
                             <div className='pl-2 flex flex-col justify-center items-center flex-1'>
-                                <section className="w-auto items-center">
+                                <section className="items-center justify-center">
                                     {dalleImage.length > 0 ? (
-                                        <div className="mt-4">
-                                            <img src={dalleImage} alt="Dalle 결과 이미지" className="max-w-[200px] rounded-md shadow-md" />
-                                        </div>
+                                        <Swiper
+                                            modules={[Navigation, Pagination]}
+                                            navigation
+                                            pagination={{ clickable: true }}
+                                            spaceBetween={30}
+                                            slidesPerView={1}
+                                            className="max-w-[200px] mt-4"
+                                            onSlideChange={handleDalleSlideChange}
+                                        >
+                                            {dalleImage.map((image, index) => (
+                                                <SwiperSlide key={index}>
+                                                    <img
+                                                        src={image}
+                                                        alt={`Generated ${index + 1}`} // "Image" 대신 의미 있는 설명으로 대체
+                                                        className="max-w-[200px] rounded-md shadow-md"
+                                                    />
+                                                </SwiperSlide>
+                                            ))}
+                                        </Swiper>
                                     ) : (
                                         <div>
                                             이미지 영역
