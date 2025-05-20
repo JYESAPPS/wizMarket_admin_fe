@@ -21,7 +21,7 @@ const LocStoreListSearchForm = ({
     const options = [
         { label: "JSAM", value: "jsam" },
         { label: "가게정보", value: "ktmyshop" },
-        { label: "기타옵션", value: "other_option" },
+        { label: "풀무원", value: "PULMUONE" },
       ];
 
     // Load recent searches from localStorage
