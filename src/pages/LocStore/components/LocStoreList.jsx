@@ -63,27 +63,27 @@ const LocStoreList = ({ data }) => {
         setSortConfig({ key, direction });
     };
 
-    const handleLinkClick = (event, store_business_id) => {
-        event.preventDefault();
+    // const handleLinkClick = (event, store_business_id) => {
+    //     event.preventDefault();
 
-        const REPORT_URL = `${process.env.REACT_APP_REPORT}/wizmarket/report/${store_business_id}`;
-        const width = 412;
-        const height = 900;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
+    //     const REPORT_URL = `${process.env.REACT_APP_REPORT}/wizmarket/report/${store_business_id}`;
+    //     const width = 412;
+    //     const height = 900;
+    //     const left = window.screenX + (window.outerWidth - width) / 2;
+    //     const top = window.screenY + (window.outerHeight - height) / 2;
 
-        // window.open(
-        //     REPORT_URL,
-        //     "_blank",
-        //     `width=${width},height=${height},top=${top},left=${left}`
-        // );
+    //     // window.open(
+    //     //     REPORT_URL,
+    //     //     "_blank",
+    //     //     `width=${width},height=${height},top=${top},left=${left}`
+    //     // );
 
-        window.open(
-            REPORT_URL,
-            "_blank",
-            `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no`
-        );
-    };
+    //     window.open(
+    //         REPORT_URL,
+    //         "_blank",
+    //         `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no`
+    //     );
+    // };
 
 
     // 리포트 페이지 열기 새 기능
