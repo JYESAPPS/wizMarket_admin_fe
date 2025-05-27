@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import LocStoreContentModal from './LocStoreContentModal';
 import DataLengthDown from '../../../components/DataLengthDown';
 import Pagination from '../../../components/Pagination';
+import axios from 'axios';
+
 
 const LocStoreList = ({ data }) => {
 
@@ -81,8 +83,44 @@ const LocStoreList = ({ data }) => {
             "_blank",
             `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no`
         );
-
     };
+
+
+    // 리포트 페이지 열기 새 기능
+    const handleReportClick = async (event, store_business_id) => {
+        event.preventDefault();
+      
+        try {
+          // ✅ 건물관리번호를 서버로 전송 (예: FastAPI 엔드포인트)
+          const response = await axios.post(
+            `${process.env.REACT_APP_FASTAPI_REPORT_URL}/report/get/store/uuid`,  // 예시 엔드포인트
+            { store_business_id },  // JSON 바디
+            {
+              headers: { 'Content-Type': 'application/json' },
+            }
+          );
+      
+          // ✅ 서버에서 UUID나 기타 식별자 응답받기
+          const { uuid } = response.data;  // 예시: { "uuid": "123e4567..." }
+      
+          // ✅ 받은 UUID로 새창 열기
+          const REPORT_URL = `${process.env.REACT_APP_REPORT}/wizmarket/report/${uuid}`;
+          const width = 412;
+          const height = 900;
+          const left = window.screenX + (window.outerWidth - width) / 2;
+          const top = window.screenY + (window.outerHeight - height) / 2;
+      
+          window.open(
+            REPORT_URL,
+            "_blank",
+            `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no`
+          );
+        } catch (error) {
+          console.error("서버 요청 중 오류:", error);
+          alert("서버 오류! 다시 시도해보세요.");
+        }
+      };
+      
 
     // const handleModalClick = (event, storeBusinessNumber) => {
     //     event.preventDefault();
@@ -243,7 +281,7 @@ const LocStoreList = ({ data }) => {
                                 <td className="border border-gray-300 p-4">
                                     <p
                                         className="cursor-pointer hover:text-blue-600 inline-block"
-                                        onClick={(e) => handleLinkClick(e, item.store_business_number)}
+                                        onClick={(e) => handleReportClick(e, item.store_business_number)}
                                     >
                                         {item.store_name}
                                     </p>
