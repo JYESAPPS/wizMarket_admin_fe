@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import Header from '../../components/Header';
-import Aside from '../../components/Aside';
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -26,9 +25,7 @@ const Login = () => {
     <div>
       <Header />
       <div className="flex">
-        <div className="mb:hidden">
-          <Aside />
-        </div>
+        
         <div className="flex justify-center items-start p-12 w-full min-h-screen">
           <div className="bg-white">
             <h1 className="text-2xl font-bold pb-4 text-center">로그인</h1>
