@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Cookies from "js-cookie";
 import Main from "./pages/Main/Main";
 import CommercialDistrict from "./pages/CommercialDistrict/CommercialDistrict";
 import CommercialDistrict2 from "./pages/CommercialDistrict2/CommercialDistrict2";
@@ -25,13 +26,14 @@ import Login from "./pages/Login/Login";
 
 const Router = () => {
 
-  const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+  const isLoggedIn = Cookies.get("isLoggedIn");
 
-  if (!isLoggedIn && window.location.pathname !== "/login") {
-    // 로그인 아니면 강제 이동
+  if (isLoggedIn !== "true" && window.location.pathname !== "/login") {
+    // 로그인 안 되어 있으면 강제로 로그인 페이지로 이동
     window.location.href = "/login";
-    return null;  // 이동 시 렌더링 방지
+    return null; // 이동 중 렌더링 방지
   }
+
 
   return (
     <BrowserRouter>
