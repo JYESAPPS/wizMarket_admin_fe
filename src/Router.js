@@ -21,8 +21,18 @@ import TestGenerateVideo from "./pages/TestGenerateVideo/TestGenerateVideo";
 import TestMusic from "./pages/TestMusic/TestMusic";
 import TestStory from "./pages/TestStory/TestStory";
 import TestEditImage from "./pages/TestEditImage/TestEditImage";
+import Login from "./pages/Login/Login";
 
 const Router = () => {
+
+  const isLoggedIn = sessionStorage.getItem("isLoggedIn");
+
+  if (!isLoggedIn && window.location.pathname !== "/login") {
+    // 로그인 아니면 강제 이동
+    window.location.href = "/login";
+    return null;  // 이동 시 렌더링 방지
+  }
+
   return (
     <BrowserRouter>
       <Routes>
@@ -31,6 +41,7 @@ const Router = () => {
         <Route path="/commercial2" element={<CommercialDistrict2 />} />
         <Route path="/rising" element={<RisingBusiness />} />
         <Route path="/fastAPITest" element={<FastAPIRequest />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/loc/info" element={<LocInfo />} />
         <Route path="/loc/store" element={<LocStore />} />
         <Route path="/population" element={<Population />} />
