@@ -122,23 +122,7 @@ const LocStoreList = ({ data }) => {
       };
       
 
-    // const handleModalClick = (event, storeBusinessNumber) => {
-    //     event.preventDefault();
-
-    //     const ADS_URL = `${process.env.REACT_APP_ADS}/ads/${storeBusinessNumber}`;
-    //     const width = 400;
-    //     const height = 800;
-    //     const left = window.screenX + (window.innerWidth / 4) * 2 + (window.innerWidth / 4 - width) / 2;
-    //     const top = window.screenY + (window.outerHeight - height) / 2;
-
-    //     window.open(
-    //         ADS_URL,
-    //         "_blank",
-    //         `width=${width},height=${height},top=${top},left=${left}`
-    //     );
-    // };
-
-    const handleModalClick = (event, storeBusinessNumber) => {
+      const handleModalClick = (event, storeBusinessNumber) => {
         event.preventDefault();
 
         const ADS_URL = `${process.env.REACT_APP_ADS_LOGIN}/ads/login/${storeBusinessNumber}`;
@@ -301,7 +285,7 @@ const LocStoreList = ({ data }) => {
                                             wizAD
                                         </button>
                                         <td className="block sm:hidden bg-blue-300 text-white p-2 rounded border border-gray-300 hover:border-gray-400"
-                                            onClick={(e) => handleTemplateClick(e, item.store_business_number)}
+                                            onClick={(e) => handleModalClick(e, item.store_business_number)}
                                         >
                                             wizAD
                                             {item.branch_name}
