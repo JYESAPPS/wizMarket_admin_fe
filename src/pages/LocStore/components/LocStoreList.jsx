@@ -89,40 +89,40 @@ const LocStoreList = ({ data }) => {
     // 리포트 페이지 열기 새 기능
     const handleReportClick = async (event, store_business_id) => {
         event.preventDefault();
-      
-        try {
-          // ✅ 건물관리번호를 서버로 전송 (예: FastAPI 엔드포인트)
-          const response = await axios.post(
-            `${process.env.REACT_APP_FASTAPI_REPORT_URL}/report/get/store/uuid`,  // 예시 엔드포인트
-            { store_business_id },  // JSON 바디
-            {
-              headers: { 'Content-Type': 'application/json' },
-            }
-          );
-      
-          // ✅ 서버에서 UUID나 기타 식별자 응답받기
-          const { uuid } = response.data;  // 예시: { "uuid": "123e4567..." }
-      
-          // ✅ 받은 UUID로 새창 열기
-          const REPORT_URL = `${process.env.REACT_APP_REPORT}/wizmarket/report/${uuid}`;
-          const width = 412;
-          const height = 900;
-          const left = window.screenX + (window.outerWidth - width) / 2;
-          const top = window.screenY + (window.outerHeight - height) / 2;
-      
-          window.open(
-            REPORT_URL,
-            "_blank",
-            `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no`
-          );
-        } catch (error) {
-          console.error("서버 요청 중 오류:", error);
-          alert("서버 오류! 다시 시도해보세요.");
-        }
-      };
-      
 
-      const handleModalClick = (event, storeBusinessNumber) => {
+        try {
+            // ✅ 건물관리번호를 서버로 전송 (예: FastAPI 엔드포인트)
+            const response = await axios.post(
+                `${process.env.REACT_APP_FASTAPI_REPORT_URL}/report/get/store/uuid`,  // 예시 엔드포인트
+                { store_business_id },  // JSON 바디
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                }
+            );
+
+            // ✅ 서버에서 UUID나 기타 식별자 응답받기
+            const { uuid } = response.data;  // 예시: { "uuid": "123e4567..." }
+
+            // ✅ 받은 UUID로 새창 열기
+            const REPORT_URL = `${process.env.REACT_APP_REPORT}/wizmarket/report/${uuid}`;
+            const width = 412;
+            const height = 900;
+            const left = window.screenX + (window.outerWidth - width) / 2;
+            const top = window.screenY + (window.outerHeight - height) / 2;
+
+            window.open(
+                REPORT_URL,
+                "_blank",
+                `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no`
+            );
+        } catch (error) {
+            console.error("서버 요청 중 오류:", error);
+            alert("서버 오류! 다시 시도해보세요.");
+        }
+    };
+
+
+    const handleModalClick = (event, storeBusinessNumber) => {
         event.preventDefault();
 
         const ADS_URL = `${process.env.REACT_APP_ADS_LOGIN}/ads/login/${storeBusinessNumber}`;
@@ -274,7 +274,7 @@ const LocStoreList = ({ data }) => {
                                     <div className="flex justify-center space-x-3">
                                         <button
                                             onClick={() => handleClick(item.store_business_number)}
-                                            className=" hidden sm:block bg-blue-300 text-white p-2 rounded border border-gray-300 hover:border-gray-400"
+                                            className="hidden sm:block bg-blue-300 text-white p-2 rounded border border-gray-300 hover:border-gray-400"
                                         >
                                             정보 등록
                                         </button>
@@ -284,14 +284,22 @@ const LocStoreList = ({ data }) => {
                                         >
                                             wizAD
                                         </button>
-                                        <td className="block sm:hidden bg-blue-300 text-white p-2 rounded border border-gray-300 hover:border-gray-400"
+                                        {/* ✅ 아래 두 줄의 td → div 로 변경 */}
+                                        <div
+                                            className="block sm:hidden bg-blue-300 text-white p-2 rounded border border-gray-300 hover:border-gray-400 cursor-pointer"
                                             onClick={(e) => handleModalClick(e, item.store_business_number)}
                                         >
                                             wizAD
-                                            {item.branch_name}
-                                        </td>
+                                        </div>
+                                        <div
+                                            className="block sm:hidden bg-blue-300 text-white p-2 rounded border border-gray-300 hover:border-gray-400 cursor-pointer"
+                                            onClick={(e) => handleTemplateClick(e, item.store_business_number)}
+                                        >
+                                            AD
+                                        </div>
                                     </div>
                                 </td>
+
                                 <td className="border border-gray-300 p-4 hidden sm:table-cell"
                                     onClick={(e) => handleTemplateClick(e, item.store_business_number)}
                                 >
