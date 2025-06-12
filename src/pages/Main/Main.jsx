@@ -9,7 +9,7 @@ const Main = () => {
         <div>
             <Header />
             <div className="flex">
-                <dir className="mb:hidden">
+                <dir className="">
                     <Aside />
                 </dir>
                 <main className="flex flex-col gap-4 p-4 overflow-x-hidden w-full">
