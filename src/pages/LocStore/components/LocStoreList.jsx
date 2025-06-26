@@ -136,6 +136,9 @@ const LocStoreList = ({ data }) => {
             "_blank",
             `width=${width},height=${height},top=${top},left=${left}`
         );
+        // 모바일 버전 확인용
+        // window.location.href = ADS_URL;
+
     };
 
     const handleTemplateClick = (event, storeBusinessNumber) => {
