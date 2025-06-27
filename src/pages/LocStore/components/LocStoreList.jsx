@@ -121,7 +121,6 @@ const LocStoreList = ({ data }) => {
         }
     };
 
-
     const handleModalClick = (event, storeBusinessNumber) => {
         event.preventDefault();
 
