@@ -207,7 +207,7 @@ const LocStoreList = ({ data }) => {
                                 지점명
                             </th>
                             <th className="border border-gray-300 p-4 hidden sm:table-cell">
-                                <div className="flex justify-center items-center text-2xl">
+                                <div className="flex justify-center items-center">
                                     시/도
                                     <button onClick={() => handleSort('city_name')} className="ml-2 flex flex-col items-center justify-center p-2">
                                         <span className="text-xs">▲</span>
