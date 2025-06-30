@@ -23,6 +23,7 @@ import TestMusic from "./pages/TestMusic/TestMusic";
 import TestStory from "./pages/TestStory/TestStory";
 import TestEditImage from "./pages/TestEditImage/TestEditImage";
 import Login from "./pages/Login/Login";
+import Cms from "./pages/Cms/Cms";
 
 const Router = () => {
 
@@ -60,6 +61,7 @@ const Router = () => {
         <Route path="/test/music" element={<TestMusic />} />
         <Route path="/test/story" element={<TestStory />} />
         <Route path="/test/edit/image" element={<TestEditImage />} />
+        <Route path="/cms" element={<Cms />} />
       </Routes>
     </BrowserRouter>
   );

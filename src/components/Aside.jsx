@@ -109,7 +109,7 @@ const Aside = () => {
                                 <Link to="/population">전국 인구 정보</Link>
                             </li>
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
-                                <Link to="/">점주 성향정보(준비중)</Link>
+                                <Link to="/cms">썸네일 등록</Link>
                             </li>
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
                                 <Link to="/">방문객 성향정보(준비중)</Link>
