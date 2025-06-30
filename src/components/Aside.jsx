@@ -184,9 +184,6 @@ const Aside = () => {
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
                                 <Link to="/test/remove/background">이미지 배경 제거</Link>
                             </li>
-                            <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
-                                <Link to="/test/router">라우터 테스트</Link>
-                            </li>
                         </div>
                     </ul>
                 </nav>
