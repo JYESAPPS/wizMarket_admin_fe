@@ -3,9 +3,17 @@ import axios from "axios";
 
 const Cms = () => {
     const [categoryList, setCategoryList] = useState([]);
+    const [selectedCategoryId, setSelectedCategoryId] = useState("");
+    const [styleInputs, setStyleInputs] = useState(
+        Array.from({ length: 6 }, (_, i) => ({
+            designId: i + 1,
+            prompts: [],
+            rawInput: ""
+        }))
+    );
 
     useEffect(() => {
-        const fetchNotices = async () => {
+        const fetchCategories = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/get/category`);
                 console.log(response.data.category_list);
@@ -14,53 +22,96 @@ const Cms = () => {
                 console.error("카테고리 불러오기 실패:", error);
             }
         };
-
-        fetchNotices();
+        fetchCategories();
     }, []);
 
+    const handlePromptChange = (idx, value) => {
+        const updated = [...styleInputs];
+        updated[idx].rawInput = value;
+        // 수정된 코드 (세미콜론 기준 분리)
+        updated[idx].prompts = value
+            .split(";")
+            .map(p => p.trim())
+            .filter(p => p.length > 0);
+        setStyleInputs(updated);
+    };
+
+    const handleSubmit = async () => {
+        if (!selectedCategoryId) {
+            alert("소분류를 선택해주세요.");
+            return;
+        }
+
+        const payload = {
+            categoryId: parseInt(selectedCategoryId, 10),
+            styles: styleInputs.map(({ designId, prompts }) => ({
+                designId,
+                prompts
+            }))
+        };
+
+        console.log("제출 데이터:", payload);
+
+        try {
+            await axios.post(`${process.env.REACT_APP_FASTAPI_BASE_URL}/cms/thumbnail/insert`, payload);
+            alert("등록 완료");
+
+            // ✅ 프롬프트 입력값 초기화
+            setStyleInputs(
+                Array.from({ length: 6 }, (_, i) => ({
+                    designId: i + 1,
+                    prompts: [],
+                    rawInput: ""
+                }))
+            );
+        } catch (err) {
+            console.error("등록 실패:", err);
+            alert("등록 실패");
+        }
+    };
+
+
     return (
-        <div className="mx-auto p-6">
-            <h2 className="text-2xl font-bold pb-6">썸네일 등록</h2>
+        <div className="mx-auto p-6 max-w-3xl">
+            <div className="flex justify-between items-center pb-6">
+                <h2 className="text-2xl font-bold">썸네일 작업</h2>
+                <button onClick={handleSubmit} className="text-2xl font-bold border px-3 py-2">
+                    썸네일 등록
+                </button>
+            </div>
 
-            <table className="w-full border border-gray-300">
-                <thead className="bg-gray-100">
-                    <tr>
-                        <th className="border p-2 text-left">소분류</th>
-                        <th className="border p-2 text-left">스타일</th>
-                        <th className="border p-2 text-left">넘버링</th>
-                        <th className="border p-2 text-left">프롬프트</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {categoryList.map((category, index) => (
-                        <tr key={index}>
-                            <td className="border p-2">{category}</td>
-                            <td className="border p-2">
-                                <input
-                                    type="number"
-                                    className="w-full border px-2 py-1"
-                                    placeholder="스타일 번호"
-                                />
-                            </td>
-                            <td className="border p-2">
-                                <input
-                                    type="number"
-                                    className="w-full border px-2 py-1"
-                                    placeholder="넘버링"
-                                />
-                            </td>
-                            <td className="border p-2">
-                                <textarea
-                                    rows={2}
-                                    className="w-full border px-2 py-1 resize-none"
-                                    placeholder="프롬프트 입력"
-                                />
-                            </td>
-                        </tr>
+            <div className="mb-6">
+                <label className="block mb-2 text-lg font-semibold">소분류 선택</label>
+                <select
+                    value={selectedCategoryId}
+                    onChange={(e) => setSelectedCategoryId(e.target.value)}
+                    className="w-full border px-4 py-2"
+                >
+                    <option value="">-- 소분류 선택 --</option>
+                    {categoryList.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                        </option>
                     ))}
-                </tbody>
-            </table>
+                </select>
+            </div>
 
+            {selectedCategoryId && (
+                <div className="space-y-4">
+                    {styleInputs.map((style, idx) => (
+                        <div key={idx}>
+                            <label className="block font-semibold mb-1">스타일 {style.designId}</label>
+                            <textarea
+                                rows={3}
+                                className="w-full border px-2 py-1 resize-none"
+                                placeholder="프롬프트 입력 (세미콜론 ; 으로 구분)"
+                                value={style.rawInput}
+                                onChange={(e) => handlePromptChange(idx, e.target.value)}
+                            />
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
