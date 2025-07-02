@@ -2,23 +2,12 @@ import Aside from '../../components/Aside';
 import Header from '../../components/Header';
 import React, { useState } from 'react';
 import axios from 'axios';
-import GuideChageImage from './Guide/GuideChageImage';
+
 import GuidePersonImage from './Guide/GuidePersonImage';
 import Select from 'react-select';
 import ImageCompare from './Compare/ImageCompare';
 
 const TestEditImage = () => {
-
-    // 이미지 내용 바꾸기 테스트
-    const [oldImage, setOldImage] = useState(null); // 미리보기용 이미지 URL
-    const [uploadedFile, setUploadedFile] = useState(null); // 실제 업로드할 파일
-    const [guide, setGuide] = useState(false); // 가이드
-
-    const [find, setFind] = useState(""); // 찾을 것
-    const [change, setChange] = useState(""); // 바꿀 것
-    const [changing, setChanging] = useState(false); // 로딩 상태
-    const [imageUrl, setImageUrl] = useState(null); // 생성된 이미지 URL
-
 
     // 인물 사진 바꾸기 테스트
     const [personImage, setPersonImage] = useState(null); // 미리보기용 이미지 URL
@@ -29,59 +18,14 @@ const TestEditImage = () => {
     const [personImageUrl, setPersonImageUrl] = useState(null); // 생성된 이미지 URL
 
 
+    // 배경 제거
+    const [oldImage, setOldImage] = useState(null); // 미리보기용 이미지 URL
+    const [uploadedFile, setUploadedFile] = useState(null); // 실제 업로드할 파일
 
-    // 가이드 보기/숨기기
-    const toggleGuide = () => {
-        setGuide((prev) => !prev);
-    };
+    const [freeImageLoding, setFreeImageLoading] = useState(false)
+    const [freeImage, setFreeImage] = useState(null);   // 배경 제거 후 이미지2
 
-    // 파일 선택 시 미리보기 및 파일 저장
-    const previewImage = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setOldImage(URL.createObjectURL(file)); // 미리보기 URL 저장
-            setUploadedFile(file); // 파일 객체 저장
-        }
-    };
 
-    // 생성 함수
-    const changeImage = async () => {
-        if (!uploadedFile) {
-            console.error("파일이 선택되지 않았습니다.");
-            return;
-        }
-
-        setChanging(true);
-
-        // FormData 생성
-        const formData = new FormData();
-        formData.append("image", uploadedFile); // 실제 이미지 파일
-        formData.append("find", find); // 사용자가 찾을 객체
-        formData.append("change", change); // 변경할 객체
-
-        try {
-            const response = await axios.post(
-                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/edit/image`,
-                formData,
-                {
-                    responseType: "blob", // 이게 빠지면 이미지 깨짐
-                }
-            );
-
-            if (response.data) {
-                const imageBlob = new Blob([response.data], { type: "image/png" });
-                const imageUrl = URL.createObjectURL(imageBlob);
-                console.log("변환된 이미지 URL:", imageUrl);
-                setImageUrl(imageUrl);  // <img src={imageUrl} /> 형태로 사용 가능
-            } else {
-                console.error("이미지 변환 실패:", response.data);
-            }
-        } catch (err) {
-            console.error("저장 중 오류 발생:", err);
-        } finally {
-            setChanging(false);
-        }
-    };
 
     // 인물 사진 바꾸기 가이드 보기/숨기기
     const togglePersonGuide = () => {
@@ -105,19 +49,19 @@ const TestEditImage = () => {
             console.error("파일이 선택되지 않았습니다.");
             return;
         }
-    
+
         setPersonChanging(true);
-    
+
         // FormData 생성
         const formData = new FormData();
         formData.append("image", personUploadedFile); // 실제 이미지 파일
         formData.append("style", personStyle); // 사용자가 찾을 객체
-    
+
         // FormData 로그 출력 (실제 데이터를 확인)
         // for (let [key, value] of formData.entries()) {
         //     console.log(key, value);
         // }
-    
+
         try {
             const response = await axios.post(
                 `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/change/person`,
@@ -138,16 +82,16 @@ const TestEditImage = () => {
             setPersonChanging(false);
         }
     };
-    
+
 
     // 지원 가능 API 목록 보기
     const GuideModal = () => {
         const guideWindow = window.open(
-          "", // 빈 페이지 열기
-          "_blank", // 새 탭 (또는 새 창)
-          "width=800,height=600,resizable=yes,scrollbars=yes"
+            "", // 빈 페이지 열기
+            "_blank", // 새 탭 (또는 새 창)
+            "width=800,height=600,resizable=yes,scrollbars=yes"
         );
-      
+
         // 새 창에 이미지 삽입
         guideWindow.document.write(`
           <html>
@@ -167,7 +111,43 @@ const TestEditImage = () => {
           </html>
         `);
     };
-      
+
+    // 배경 제거
+    // 파일 선택 시 미리보기 및 파일 저장
+    const previewImage = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setOldImage(URL.createObjectURL(file)); // 미리보기 URL 저장
+            setUploadedFile(file); // 파일 객체 저장
+        }
+    };
+
+    // 배경 제거 요청2
+    const changeFreeImage = async () => {
+        if (!uploadedFile) {
+            console.error("파일이 선택되지 않았습니다.");
+            return;
+        }
+
+        setFreeImageLoading(true);
+        const formData = new FormData();
+        formData.append("image", uploadedFile); // 올바른 파일 객체 추가
+
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/remove/background/free`,
+                formData,
+                { responseType: "blob" } // 🚀 중요: 바이너리 데이터를 Blob으로 받음
+            );
+            const imageUrl = URL.createObjectURL(response.data);
+            setFreeImage(imageUrl); // 🖼️ 변환된 이미지 URL을 저장
+        } catch (err) {
+            console.error("저장 중 오류 발생:", err);
+        } finally {
+            setFreeImageLoading(false);
+        }
+    };
+
 
     return (
         <div>
@@ -179,86 +159,6 @@ const TestEditImage = () => {
                 <main className="flex flex-col gap-4 min-h-screen p-4">
                     <div className='flex flex-row'>
                         <div className='flex flex-row gap-4'>
-                            <div className='flex flex-col items-center min-w-96'>
-                                <h4 className='text-lg font-semibold'>이미지 속 내용물 바꾸기</h4>
-                                <section className='py-4'>
-                                    <div className="flex items-center gap-2 pb-2">
-                                        <p className="text-lg font-medium">가이드 보기</p>
-                                        <button
-                                            onClick={toggleGuide}
-                                            className="text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                                        >
-                                            {guide ? "닫기" : "열기"}
-                                        </button>
-                                    </div>
-
-                                </section>
-                                <section className='pb-4'>
-                                    {guide && (
-                                        <div className="p-2 bg-gray-100 rounded text-sm text-gray-800">
-                                            <GuideChageImage />
-                                        </div>
-                                    )}
-                                </section>
-                                <section className=''>
-                                    <input type="file" accept="image/*" onChange={previewImage} />
-                                </section>
-                                <section className="flex flex-row items-center gap-4">
-                                    {/* 기존 이미지 미리보기 */}
-                                    {oldImage && (
-                                        <div className="items-center mt-4">
-                                            <img
-                                                src={oldImage}
-                                                alt="기존 이미지"
-                                                className="max-h-96 rounded-md shadow-md"
-                                            />
-                                        </div>
-                                    )}
-                                    {imageUrl && (
-                                        <div className="items-center mt-4">
-                                            <img
-                                                src={imageUrl}
-                                                alt="생성된 이미지"
-                                                className="max-h-96 rounded-md shadow-md"
-                                            />
-                                        </div>
-                                    )}
-                                </section>
-                                <section className='py-4'>
-                                    <textarea
-                                        className="border-2 border-black p-3 w-full h-full overflow-auto resize-none whitespace-pre-line"
-                                        rows={1}
-                                        cols={25}
-                                        value={find}
-                                        onChange={(e) => setFind(e.target.value)}
-                                        placeholder={"이미지 속 찾을 것 객체 작성"}
-                                    />
-                                </section>
-                                <section className='py-4'>
-                                    <textarea
-                                        className="border-2 border-black p-3 w-full h-full overflow-auto resize-none whitespace-pre-line"
-                                        rows={1}
-                                        cols={25}
-                                        value={change}
-                                        onChange={(e) => setChange(e.target.value)}
-                                        placeholder={"해당 객체를 무엇으로 바꿀 지 작성"}
-                                    />
-                                </section>
-                                <section className="py-4">
-                                    <button
-                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
-                                        onClick={changeImage}
-                                        disabled={changing}
-                                    >
-                                        {changing ? (
-                                            <div className="w-6 h-6 border-4 border-white border-solid border-t-transparent rounded-full animate-spin"></div>
-                                        ) : (
-                                            "이미지 바꾸기"
-                                        )}
-                                    </button>
-                                </section>
-
-                            </div>
                             <div className='flex flex-col items-center min-w-96'>
                                 <h4 className='text-lg font-semibold'>인물 이미지 스타일 바꾸기</h4>
                                 <section className='pt-4'>
@@ -374,7 +274,50 @@ const TestEditImage = () => {
                                     </button>
                                 </section>
                                 <section className="py-4">
-                                    <ImageCompare/>
+                                    <ImageCompare />
+                                </section>
+                            </div>
+                            <div className='w-full'>
+                                <section>
+                                    <h4>이미지 파일 배경 제거 테스트1</h4>
+                                </section>
+                                <section className='flex items-center justify-center'>
+                                    <input type="file" accept="image/*" onChange={previewImage} className='w-1/3' />
+
+                                    <button
+                                        className="py-2 m-4 w-1/3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                        onClick={changeFreeImage}
+                                        disabled={freeImageLoding}
+                                    >
+                                        {freeImageLoding ? (
+                                            <div className="w-6 h-6 border-4 border-white border-solid border-t-transparent rounded-full animate-spin"></div>
+                                        ) : (
+                                            "배경 제거2"
+                                        )}
+                                    </button>
+                                </section>
+                                <section className="w-full items-center flex">
+                                    {/* 기존 이미지 미리보기 */}
+                                    {oldImage && (
+                                        <div className="items-center mt-4">
+                                            <img
+                                                src={oldImage}
+                                                alt="기존 이미지"
+                                                className="max-h-[600px] rounded-md shadow-md"
+                                            />
+                                        </div>
+                                    )}
+                                    <div>
+                                        {freeImage && (
+                                            <div className="items-center mt-4">
+                                                <img
+                                                    src={freeImage}
+                                                    alt="배경 제거된 이미지"
+                                                    className="max-h-[600px] rounded-md shadow-md"
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
                                 </section>
                             </div>
                         </div>
