@@ -111,9 +111,6 @@ const Aside = () => {
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
                                 <Link to="/cms">썸네일 등록</Link>
                             </li>
-                            <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
-                                <Link to="/">방문객 성향정보(준비중)</Link>
-                            </li>
                         </div>
                     </ul>
                     <ul className='border'>
@@ -177,6 +174,9 @@ const Aside = () => {
                             </li>
                             <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
                                 <Link to="/test/gpt/model">gpt 새 모델 테스트</Link>
+                            </li>
+                            <li className='p-4 hover:bg-gray-200 text-slate-700 text-lg'>
+                                <Link to="/test/face">얼굴 테스트</Link>
                             </li>
                         </div>
                     </ul>
