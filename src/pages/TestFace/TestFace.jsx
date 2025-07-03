@@ -18,7 +18,6 @@ const TestFace = () => {
     const [personPrompt, setPersonPrompt] = useState(""); // 생성할 프롬프트
     const [personChanging, setPersonChanging] = useState(false); // 로딩 상태
     const [resultList, setResultList] = useState([]); // 생성된 이미지와 유사도가 담긴 리스트
-    const [selectResult, setSelectResult] = useState(0); 
 
 
 
@@ -69,9 +68,7 @@ const TestFace = () => {
         }
     };
 
-    const handleResultSlideChange = (swiper) => {
-        setSelectResult(swiper.activeIndex);
-    };
+
 
 
     return (
@@ -146,7 +143,7 @@ const TestFace = () => {
                                             spaceBetween={30}
                                             slidesPerView={1}
                                             className="max-w-[200px]"
-                                            onSlideChange={handleResultSlideChange}
+                                            // onSlideChange={handleResultSlideChange}
                                         >
                                             {resultList.map((image, index) => (
                                                 <SwiperSlide key={index}>
