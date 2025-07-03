@@ -109,7 +109,6 @@ const AdsContentList = ({ AdsList = [] }) => {
     // 홍보용 창 열기
     const promoteModalClick = (event, ads_id) => {
         event.preventDefault();
-        console.log(ads_id)
         const ADS_URL = `${process.env.REACT_APP_ADS}/ads/promote/${ads_id}`;
         const width = 300;
         const height = 400;

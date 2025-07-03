@@ -67,7 +67,6 @@ const TestNewGptModel = () => {
             role: oldRole,
             prompt: oldPrompt,
         };
-        console.log("요청 데이터:", basicInfo); // 요청 데이터 확인
         try {
             const response = await axios.post(
                 `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/generate/test/old/content`,

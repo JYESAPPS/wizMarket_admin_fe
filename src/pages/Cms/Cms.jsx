@@ -18,7 +18,6 @@ const Cms = () => {
         const fetchCategories = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/get/category`);
-                console.log(response.data.category_list);
                 setCategoryList(response.data.category_list || []);
             } catch (error) {
                 console.error("카테고리 불러오기 실패:", error);

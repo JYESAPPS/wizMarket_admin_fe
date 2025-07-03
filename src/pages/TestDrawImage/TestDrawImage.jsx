@@ -60,7 +60,7 @@ const TestDrawImage = () => {
     };
 
     const downStable = async () => {
-        console.log(stableImage.length)
+
         try {
             if (!stableImage || stableImage.length === 0) {
                 alert("다운로드할 이미지가 없습니다.");
@@ -123,7 +123,6 @@ const TestDrawImage = () => {
         }
 
         const imageUrl = dalleImage[selectDalleImage]; // ✅ 현재 보고 있는 이미지
-        console.log("다운로드할 이미지 URL:", imageUrl);
 
         // 📌 UUID 생성
         const uuid = uuidv4().split("-")[0]; // 짧은 UUID
@@ -198,7 +197,6 @@ const TestDrawImage = () => {
         }
 
         const imageUrl = midImage[selectMidImage]; // ✅ 현재 보고 있는 이미지
-        console.log("다운로드할 이미지 URL:", imageUrl);
 
         // 📌 UUID 생성
         const uuid = uuidv4().split("-")[0]; // 짧은 UUID
@@ -267,7 +265,6 @@ const TestDrawImage = () => {
         }
 
         const imageUrl = imagenImage[selectImagenImage]; // ✅ 현재 보고 있는 이미지
-        console.log("다운로드할 이미지 URL:", imageUrl);
 
         // 📌 UUID 생성
         const uuid = uuidv4().split("-")[0]; // 짧은 UUID

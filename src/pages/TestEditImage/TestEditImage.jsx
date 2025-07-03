@@ -71,7 +71,6 @@ const TestEditImage = () => {
                 }
             );
             if (response.data) {
-                console.log(response.data)
                 setPersonImageUrl(response.data.image_url);  // <img src={imageUrl} /> 형태로 사용 가능
             } else {
                 console.error("이미지 변환 실패:", response.data);

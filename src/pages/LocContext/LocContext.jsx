@@ -31,11 +31,7 @@ const LocContext = () => {
         districtName = fullDistrict.split(' ')[0];
     }
 
-    useEffect(() => {
-        console.log(cityName)
-        console.log(districtName)
-        console.log(subDistrictName)
-    }, [cityName, districtName, subDistrictName])
+
 
     const {
         cities,
