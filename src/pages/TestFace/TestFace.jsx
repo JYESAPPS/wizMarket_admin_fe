@@ -3,17 +3,22 @@ import Header from '../../components/Header';
 import React, { useState } from 'react';
 import axios from 'axios';
 import clsx from 'clsx';
-import Select from 'react-select';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import { Navigation, Pagination } from 'swiper/modules';
 
 
 const TestFace = () => {
 
-    // 얼굴 바꾸기 테스트
+    // 얼굴 비교 테스트
     const [modelImage, setModelImage] = useState(null); // 미리보기용 이미지 URL
     const [personUploadedFile, setPersonUploadedFile] = useState(null); // 실제 업로드할 파일
     const [personPrompt, setPersonPrompt] = useState(""); // 생성할 프롬프트
     const [personChanging, setPersonChanging] = useState(false); // 로딩 상태
-    const [modelImageUrl, setModelImageUrl] = useState([]); // 생성된 이미지와 유사도가 담긴 리스트
+    const [resultList, setResultList] = useState([]); // 생성된 이미지와 유사도가 담긴 리스트
+    const [selectResult, setSelectResult] = useState(0); 
 
 
 
@@ -52,8 +57,7 @@ const TestFace = () => {
                 }
             );
             if (response.data) {
-                console.log(response.data)
-                setModelImageUrl(response.data.image_url);  // <img src={imageUrl} /> 형태로 사용 가능
+                setResultList(response.data.results);  // <img src={imageUrl} /> 형태로 사용 가능
             } else {
                 console.error("이미지 변환 실패:", response.data);
             }
@@ -61,7 +65,12 @@ const TestFace = () => {
             console.error("저장 중 오류 발생:", err);
         } finally {
             setPersonChanging(false);
+            // console.log("결과", resultList)
         }
+    };
+
+    const handleResultSlideChange = (swiper) => {
+        setSelectResult(swiper.activeIndex);
     };
 
 
@@ -126,19 +135,47 @@ const TestFace = () => {
                             </button>
 
                         </section>
-                        <section className="flex-1 flex flex-col items-center justify-center pr-20">
-                            <div className="p-4">
-                                결과 이미지 영역
+                        <section className="flex-1 flex flex-col items-center justify-center pb-10 pr-10">
+                            <div>
+                                {resultList.length > 0 ? (
+                                    <div>
+                                        <Swiper
+                                            modules={[Navigation, Pagination]}
+                                            navigation
+                                            pagination={{ clickable: true }}
+                                            spaceBetween={30}
+                                            slidesPerView={1}
+                                            className="max-w-[200px]"
+                                            onSlideChange={handleResultSlideChange}
+                                        >
+                                            {resultList.map((image, index) => (
+                                                <SwiperSlide key={index}>
+                                                    <div className="text-center pb-2">
+                                                        유사도: {(image.similarity * 100).toFixed(2)}%
+                                                    </div>
+                                                    <img
+                                                        src={`data:image/png;base64,${image.image_base64}`}
+                                                        alt={`Generated ${index + 1}`} // "Image" 대신 의미 있는 설명으로 대체
+                                                        className="max-w-[200px] rounded-md shadow-md"
+                                                    />
+                                                </SwiperSlide>
+                                            ))}
+                                        </Swiper>
+                                    </div>
+                                ) : (
+                                    <div className="whitespace-pre-line">
+                                        결과 이미지 영역
+
+                                        </div>
+                                )}
                             </div>
-                            <button
-                                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                            >다운로드</button>
                         </section>
                     </div>
 
 
                 </main>
             </div>
+
         </div >
     );
 }
