@@ -14,17 +14,20 @@ const Cms = () => {
         }))
     );
 
+    // useEffect 내부 수정: 가나다순 정렬
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/get/category`);
-                setCategoryList(response.data.category_list || []);
+                const sorted = (response.data.category_list || []).sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+                setCategoryList(sorted);
             } catch (error) {
                 console.error("카테고리 불러오기 실패:", error);
             }
         };
         fetchCategories();
     }, []);
+
 
     const handlePromptChange = (idx, value) => {
         const updated = [...styleInputs];
@@ -84,8 +87,9 @@ const Cms = () => {
                         </button>
                     </div>
 
-                    <div className="mb-6">
-                        <label className="block mb-2 text-lg font-semibold">소분류 선택</label>
+                    {/* padding으로 변경 */}
+                    <div className="pb-6">
+                        <label className="block pb-2 text-lg font-semibold">소분류 선택</label>
                         <select
                             value={selectedCategoryId}
                             onChange={(e) => setSelectedCategoryId(e.target.value)}
@@ -94,7 +98,7 @@ const Cms = () => {
                             <option value="">-- 소분류 선택 --</option>
                             {categoryList.map((cat) => (
                                 <option key={cat.id} value={cat.id}>
-                                    {cat.name}
+                                    {cat.name} 의 id 값 : {cat.id}
                                 </option>
                             ))}
                         </select>
@@ -104,7 +108,7 @@ const Cms = () => {
                         <div className="space-y-4">
                             {styleInputs.map((style, idx) => (
                                 <div key={idx}>
-                                    <label className="block font-semibold mb-1">스타일 {style.designId}</label>
+                                    <label className="block font-semibold pb-1">스타일 {style.designId}</label>
                                     <textarea
                                         rows={3}
                                         className="w-full border px-2 py-1 resize-none"
