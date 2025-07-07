@@ -13,6 +13,29 @@ const Cms = () => {
             rawInput: ""
         }))
     );
+    const [imageList, setImageList] = useState([])
+
+
+
+    const groupedImages = Array.isArray(imageList)
+        ? imageList.reduce((acc, cur) => {
+            const { design_id } = cur;
+            if (!acc[design_id]) acc[design_id] = [];
+            acc[design_id].push(cur.image_path);
+            return acc;
+        }, {})
+        : {};
+
+
+    const designIdMap = {
+        1: "3D감성",
+        2: "포토실사",
+        3: "캐릭터/만화",
+        4: "레트로",
+        5: "AI모델",
+        6: "예술",
+    };
+
 
     // useEffect 내부 수정: 가나다순 정렬
     useEffect(() => {
@@ -28,7 +51,30 @@ const Cms = () => {
         fetchCategories();
     }, []);
 
+    // 카테고리 값에 따른 이미지 리스트 불러오기
+    useEffect(() => {
+        if (!selectedCategoryId) return;
 
+        const fetchImageList = async () => {
+            try {
+                const response = await axios.post(
+                    `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/get/image/list`,
+                    { categoryId: selectedCategoryId }
+                );
+                setImageList(response.data.image_list || []);  // fallback
+            } catch (error) {
+                console.error("이미지 리스트 불러오기 실패:", error);
+                setImageList([]); // ✅ 실패해도 비워줌
+            }
+        };
+
+        fetchImageList();
+    }, [selectedCategoryId]);
+
+
+
+
+    // 프롬프트 입력 처리
     const handlePromptChange = (idx, value) => {
         const updated = [...styleInputs];
         updated[idx].rawInput = value;
@@ -40,6 +86,7 @@ const Cms = () => {
         setStyleInputs(updated);
     };
 
+    // 등록
     const handleSubmit = async () => {
         if (!selectedCategoryId) {
             alert("소분류를 선택해주세요.");
@@ -105,21 +152,46 @@ const Cms = () => {
                     </div>
 
                     {selectedCategoryId && (
-                        <div className="space-y-4">
-                            {styleInputs.map((style, idx) => (
-                                <div key={idx}>
-                                    <label className="block font-semibold pb-1">스타일 {style.designId}</label>
-                                    <textarea
-                                        rows={3}
-                                        className="w-full border px-2 py-1 resize-none"
-                                        placeholder="프롬프트 입력 (세미콜론 ; 으로 구분)"
-                                        value={style.rawInput}
-                                        onChange={(e) => handlePromptChange(idx, e.target.value)}
-                                    />
-                                </div>
-                            ))}
-                        </div>
+                        imageList.length === 0 ? (
+                            // 🔤 프롬프트 입력창 (이미지가 없을 경우)
+                            <div className="space-y-4">
+                                {styleInputs.map((style, idx) => (
+                                    <div key={idx}>
+                                        <label className="block font-semibold pb-1">스타일 {style.designId}</label>
+                                        <textarea
+                                            rows={3}
+                                            className="w-full border px-2 py-1 resize-none"
+                                            placeholder="프롬프트 입력 (세미콜론 ; 으로 구분)"
+                                            value={style.rawInput}
+                                            onChange={(e) => handlePromptChange(idx, e.target.value)}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            // 🖼️ 이미지 미리보기 (이미지가 존재할 경우)
+                            <div className="space-y-6">
+                                {Object.entries(groupedImages).map(([designId, images]) => (
+                                    <div key={designId}>
+                                        <h3 className="font-semibold text-lg pb-2">
+                                            {designIdMap[designId] || `디자인 ${designId}`}
+                                        </h3>
+                                        <div className="flex flex-wrap gap-4">
+                                            {images.map((path, idx) => (
+                                                <img
+                                                    key={idx}
+                                                    src={path}
+                                                    alt={`디자인 ${designId} 이미지`}
+                                                    className="w-32 h-32 object-cover border rounded"
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )
                     )}
+
                 </main>
             </div>
         </div>
