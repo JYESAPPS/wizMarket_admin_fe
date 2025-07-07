@@ -63,29 +63,6 @@ const LocStoreList = ({ data }) => {
         setSortConfig({ key, direction });
     };
 
-    // const handleLinkClick = (event, store_business_id) => {
-    //     event.preventDefault();
-
-    //     const REPORT_URL = `${process.env.REACT_APP_REPORT}/wizmarket/report/${store_business_id}`;
-    //     const width = 412;
-    //     const height = 900;
-    //     const left = window.screenX + (window.outerWidth - width) / 2;
-    //     const top = window.screenY + (window.outerHeight - height) / 2;
-
-    //     // window.open(
-    //     //     REPORT_URL,
-    //     //     "_blank",
-    //     //     `width=${width},height=${height},top=${top},left=${left}`
-    //     // );
-
-    //     window.open(
-    //         REPORT_URL,
-    //         "_blank",
-    //         `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no`
-    //     );
-    // };
-
-
     // 리포트 페이지 열기 새 기능
     const handleReportClick = async (event, store_business_id) => {
         event.preventDefault();
@@ -125,21 +102,27 @@ const LocStoreList = ({ data }) => {
         event.preventDefault();
 
         const ADS_URL = `${process.env.REACT_APP_ADS_LOGIN}/ads/login/${storeBusinessNumber}`;
-        const width = 400;
-        const height = 874;
-        const left = window.screenX + (window.innerWidth / 4) * 2 + (window.innerWidth / 4 - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
+
+        // 현재 브라우저 크기 기준 비율로 팝업 크기 설정
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        // 원하는 비율 (예: 폭 80%, 높이 90%)
+        const width = Math.min(450, Math.floor(screenWidth * 0.8));   // 최대 400px 제한
+        const height = Math.min(800, Math.floor(screenHeight * 0.9)); // 최대 874px 제한
+
+        const left = window.screenX + (screenWidth - width) / 2;
+        const top = window.screenY + (screenHeight - height) / 2;
 
         window.open(
             ADS_URL,
             "_blank",
-            `width=${width},height=${height},top=${top},left=${left}`
+            `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
         );
-        // 모바일 버전 확인용
-        // window.location.href = ADS_URL;
-
     };
 
+
+    // 옛날 버전
     const handleTemplateClick = (event, storeBusinessNumber) => {
         event.preventDefault();
 
