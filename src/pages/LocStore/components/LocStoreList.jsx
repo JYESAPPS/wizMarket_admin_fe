@@ -108,8 +108,10 @@ const LocStoreList = ({ data }) => {
         const screenHeight = window.innerHeight;
 
         // 원하는 비율 (예: 폭 80%, 높이 90%)
-        const width = Math.min(450, Math.floor(screenWidth * 0.8));   // 최대 400px 제한
-        const height = Math.min(800, Math.floor(screenHeight * 0.9)); // 최대 874px 제한
+        const width = Math.min(412, Math.floor(screenWidth * 0.8));   // 최대 400px 제한
+        const height = Math.min(917, Math.floor(screenHeight * 0.9)); // 최대 874px 제한
+        // const width = 412
+        // const height = 917
 
         const left = window.screenX + (screenWidth - width) / 2;
         const top = window.screenY + (screenHeight - height) / 2;
