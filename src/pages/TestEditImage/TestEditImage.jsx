@@ -18,6 +18,13 @@ const TestEditImage = () => {
     const [personImageUrl, setPersonImageUrl] = useState(null); // 생성된 이미지 URL
 
 
+    // 이미지 배경 확장
+    const [bgImage, setBgImage] = useState(null)
+    const [bgUploadFile, setBgUploadFile]  = useState(null)
+    const [bgPrompt, setBgPrompt] = useState(null)
+    const [bgLoading, setBgLoading] = useState(false)
+    const [bgUrl, setBgUrl] = useState(null)
+
     // 배경 제거
     const [oldImage, setOldImage] = useState(null); // 미리보기용 이미지 URL
     const [uploadedFile, setUploadedFile] = useState(null); // 실제 업로드할 파일
@@ -40,6 +47,15 @@ const TestEditImage = () => {
         if (file) {
             setPersonImage(URL.createObjectURL(file)); // 미리보기 URL 저장
             setPersonUploadedFile(file); // 파일 객체 저장
+        }
+    };
+
+    // 인물 사진 파일 선택 시 미리보기 및 파일 저장
+    const previewBgImage = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setBgImage(URL.createObjectURL(file)); // 미리보기 URL 저장
+            setBgUploadFile(file); // 파일 객체 저장
         }
     };
 
@@ -81,6 +97,48 @@ const TestEditImage = () => {
             setPersonChanging(false);
         }
     };
+
+
+
+    // 배경 확장 함수
+    const extendBg = async () => {
+        if (!bgUploadFile) {
+            console.error("파일이 선택되지 않았습니다.");
+            return;
+        }
+
+        setBgLoading(true);
+
+        // FormData 생성
+        const formData = new FormData();
+        formData.append("image", bgUploadFile); // 실제 이미지 파일
+        formData.append("prompt", bgPrompt); // 사용자가 찾을 객체
+
+        // FormData 로그 출력 (실제 데이터를 확인)
+        // for (let [key, value] of formData.entries()) {
+        //     console.log(key, value);
+        // }
+
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/test/extend/bg`,
+                formData,
+                {
+                    responseType: "json", // 이게 빠지면 이미지 깨짐
+                }
+            );
+            if (response.data) {
+                setBgUrl(response.data.image_url);  // <img src={imageUrl} /> 형태로 사용 가능
+            } else {
+                console.error("이미지 변환 실패:", response.data);
+            }
+        } catch (err) {
+            console.error("저장 중 오류 발생:", err);
+        } finally {
+            setBgLoading(false);
+        }
+    };
+
 
 
     // 지원 가능 API 목록 보기
@@ -151,14 +209,14 @@ const TestEditImage = () => {
     return (
         <div>
             <Header />
-            <div className="flex">
+            <div className="flex w-full">
                 <dir className="mb:hidden">
                     <Aside />
                 </dir>
-                <main className="flex flex-col gap-4 min-h-screen p-4">
-                    <div className='flex flex-row'>
-                        <div className='flex flex-row gap-4'>
-                            <div className='flex flex-col items-center min-w-96'>
+                <main className="flex flex-col min-h-screen p-4 w-full">
+                    <div className='flex flex-row w-full'>
+                        <div className='flex flex-row w-full'>
+                            <div className='flex flex-col items-center w-1/3'>
                                 <h4 className='text-lg font-semibold'>인물 이미지 스타일 바꾸기</h4>
                                 <section className='pt-4'>
                                     <div className="flex items-center gap-2 pb-2">
@@ -276,7 +334,59 @@ const TestEditImage = () => {
                                     <ImageCompare />
                                 </section>
                             </div>
-                            <div className='w-full'>
+                            <div className='flex flex-col items-center w-1/3'>
+                                <h4 className='text-lg font-semibold'>이미지 배경 확장</h4>
+                                
+                                <section className=''>
+                                    <input type="file" accept="image/*" onChange={previewBgImage} />
+                                </section>
+                                <section className="flex flex-row items-center gap-4">
+                                    {/* 기존 이미지 미리보기 */}
+                                    {bgImage && (
+                                        <div className="items-center pt-4">
+                                            <img
+                                                src={bgImage}
+                                                alt="기존 이미지"
+                                                className="max-h-96 rounded-md shadow-md"
+                                            />
+                                        </div>
+                                    )}
+                                    {bgUrl && (
+                                        <div className="items-center pt-4">
+                                            <img
+                                                src={bgUrl}
+                                                alt="생성된 이미지"
+                                                className="max-h-96 rounded-md shadow-md"
+                                            />
+                                        </div>
+                                    )}
+                                </section>
+                                <section className='py-4'>
+                                    <textarea 
+                                        className='border border-black w-full'
+                                        rows={10}
+                                        cols = {80}
+                                        value={bgPrompt}
+                                        onChange={(e) => setBgPrompt(e.target.value)}
+                                        placeholder='프롬프트 입력, 생략 가능'
+                                    />
+                                </section>
+
+                                <section className="py-4">
+                                    <button
+                                        className="p-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-all flex items-center justify-center"
+                                        onClick={extendBg}
+                                        disabled={bgLoading}
+                                    >
+                                        {bgLoading ? (
+                                            <div className="w-6 h-6 border-4 border-white border-solid border-t-transparent rounded-full animate-spin"></div>
+                                        ) : (
+                                            "배경 확장하기"
+                                        )}
+                                    </button>
+                                </section>
+                            </div>
+                            <div className='w-1/3'>
                                 <section>
                                     <h4>이미지 파일 배경 제거 테스트1</h4>
                                 </section>
@@ -291,7 +401,7 @@ const TestEditImage = () => {
                                         {freeImageLoding ? (
                                             <div className="w-6 h-6 border-4 border-white border-solid border-t-transparent rounded-full animate-spin"></div>
                                         ) : (
-                                            "배경 제거2"
+                                            "배경 제거"
                                         )}
                                     </button>
                                 </section>
