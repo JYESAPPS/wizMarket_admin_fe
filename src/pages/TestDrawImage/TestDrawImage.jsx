@@ -33,6 +33,7 @@ const TestDrawImage = () => {
     const [imagenLoading, setImagenLoading] = useState(false);
     const [imagenMessage, setImagenMessage] = useState('')
     const [imagenRatio, setImagenRatio] = useState('9:16')
+    const [imagenVer, setImagenVer] = useState('')
     const [selectImagenImage, setSelectImagenImage] = useState(0);
 
     // 📌 오늘 날짜를 YYYYMMDD 형식으로 반환하는 함수 (전역 선언)
@@ -230,13 +231,17 @@ const TestDrawImage = () => {
 
     const generateImagen = async () => {
         setImagenLoading(true);
+        setImagenMessage("");
+
+        const imagenData = {
+                prompt: imagenPrompt,
+                version: imagenVer,
+                ratio: imagenRatio
+            };
         try {
             const response = await axios.post(
                 `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/generate/image/imagen`,
-                {
-                    prompt: imagenPrompt,
-                    ratio: imagenRatio
-                },
+                imagenData,
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -535,15 +540,31 @@ const TestDrawImage = () => {
                             {/* IMAGEN 프롬프트 영역 */}
                             <div className='flex flex-col justify-center items-center flex-1'>
                                 <section className='flex w-full p-2 justify-center items-center'>
-                                    <h4 className='pr-2'>Imagen3</h4>
+                                    <h4 className='pr-2'>Imagen</h4>
+                                    <select
+                                        className="p-2 border rounded-md"
+                                        value={imagenVer}
+                                        onChange={(e) => setImagenVer(e.target.value)}
+                                    >
+                                        <option value="">버전</option>
+                                        <option value="imagen3">imagen-3</option>
+                                        <option value="imagen4">imagen-4</option>
+                                        <option value="imagen4-ultra">imagen-4-ultra</option>
+                                    </select>
+
                                     <select
                                         className="p-2 border rounded-md"
                                         value={imagenRatio}
                                         onChange={(e) => setImagenRatio(e.target.value)}
                                     >
-                                        <option value="1:1">1:1</option>
-                                        <option value="16:9">16:9</option>
-                                        <option value="9:16">9:16</option>
+                                        <option value="">비율 선택</option>
+                                        {(imagenVer === "imagen3" || imagenVer === "imagen4" || imagenVer === "imagen4-ultra") && (
+                                            <>  
+                                                <option value="1:1">1:1</option>
+                                                <option value="16:9">16:9</option>
+                                                <option value="9:16">9:16</option>
+                                            </>
+                                        )}
                                     </select>
                                 </section>
                                 <section className="items-center w-full">
