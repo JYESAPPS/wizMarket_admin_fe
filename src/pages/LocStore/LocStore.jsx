@@ -213,9 +213,7 @@ const LocStore = () => {
                         </div>
                     </section>
                     {/* 갯수 및 엑셀 다운 */}
-                    <section className="w-full mb-4">
 
-                    </section>
                     {/* 하단 리스트 */}
                     <section className="w-full">
                         {loading && (
