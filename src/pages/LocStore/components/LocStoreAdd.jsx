@@ -31,6 +31,7 @@ const LocStoreAdd = ({ onClose }) => {
     const [roadName, setRoadName] = useState("")
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [message, setMessage] = useState("");
+    const [storeNum, setStoreNum] = useState("")
 
     const options = [
         { label: "JSAM", value: "jsam" },
@@ -72,7 +73,34 @@ const LocStoreAdd = ({ onClose }) => {
                     },
                 }
             );
-            setMessage(response.data.message); // ✅ 메시지 저장
+            setMessage(response.data.message); 
+            setStoreNum(response.data.number)
+        } catch (err) {
+            if (axios.isCancel(err)) {
+                console.log('Request canceled', err.message);
+            }
+        } finally {
+
+        }
+    }
+
+    const copyData = async () => {
+
+        const payload = {
+            store_business_number : storeNum
+        }
+
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_FASTAPI_BASE_URL}/loc/store/copy`,
+                payload,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
         } catch (err) {
             if (axios.isCancel(err)) {
                 console.log('Request canceled', err.message);
@@ -157,6 +185,7 @@ const LocStoreAdd = ({ onClose }) => {
                 <div className="flex justify-end gap-2">
                     <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">닫기</button>
                     <button onClick={addNewStore} className="px-4 py-2 bg-blue-500 text-white rounded">저장</button>
+                    <button onClick={copyData} className="px-4 py-2 bg-blue-500 text-white rounded">DB 연동</button>
                 </div>
             </div>
         </div>
