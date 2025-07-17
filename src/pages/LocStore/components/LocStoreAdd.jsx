@@ -91,7 +91,7 @@ const LocStoreAdd = ({ onClose }) => {
         }
 
         try {
-            const response = await axios.post(
+            await axios.post(
                 `${process.env.REACT_APP_FASTAPI_BASE_URL}/loc/store/copy`,
                 payload,
                 {
@@ -176,13 +176,13 @@ const LocStoreAdd = ({ onClose }) => {
                 </div>
 
                 {message && (
-                    <div className="mt-4 p-2 border text-sm text-center text-blue-700">
+                    <div className="p-4 text-sm text-center text-blue-700">
                         {message}
                     </div>
                 )}
 
 
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-4">
                     <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">닫기</button>
                     <button onClick={addNewStore} className="px-4 py-2 bg-blue-500 text-white rounded">저장</button>
                     <button onClick={copyData} className="px-4 py-2 bg-blue-500 text-white rounded">DB 연동</button>
