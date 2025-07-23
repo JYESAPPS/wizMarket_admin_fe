@@ -21,10 +21,11 @@ const Cms = () => {
         ? imageList.reduce((acc, cur) => {
             const { design_id } = cur;
             if (!acc[design_id]) acc[design_id] = [];
-            acc[design_id].push(cur.image_path);
+            acc[design_id].push(cur); // ✅ 전체 객체 저장 (path만 말고)
             return acc;
         }, {})
         : {};
+
 
 
     const designIdMap = {
@@ -177,14 +178,29 @@ const Cms = () => {
                                             {designIdMap[designId] || `디자인 ${designId}`}
                                         </h3>
                                         <div className="flex flex-wrap gap-4">
-                                            {images.map((path, idx) => (
-                                                <img
-                                                    key={idx}
-                                                    src={path}
-                                                    alt={`디자인 ${designId} 이미지`}
-                                                    className="w-32 h-32 object-cover border rounded"
-                                                />
+                                            {images.map((img, idx) => (
+                                                <div key={idx} className="w-32">
+                                                    <img
+                                                        src={img.image_path}
+                                                        alt={`디자인 ${designId} 이미지`}
+                                                        className="w-32 h-32 object-cover border rounded"
+                                                    />
+                                                    <div className="relative group">
+                                                        <p
+                                                            className="text-xs text-gray-500 pt-1 truncate w-full overflow-hidden whitespace-nowrap"
+                                                        >
+                                                            {img.prompt || "(프롬프트 없음)"}
+                                                        </p>
+                                                        {img.prompt && (
+                                                            <div className="absolute z-10 hidden group-hover:block border-2 bg-white text-black text-s p-2 rounded shadow-lg w-64 top-full mt-1">
+                                                                {img.prompt}
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                </div>
                                             ))}
+
                                         </div>
                                     </div>
                                 ))}
