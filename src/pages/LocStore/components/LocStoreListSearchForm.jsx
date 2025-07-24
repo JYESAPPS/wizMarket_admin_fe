@@ -59,6 +59,31 @@ const LocStoreListSearchForm = ({
         localStorage.removeItem('recentSearches');
     };
 
+    const handleApp = (event, storeBusinessNumber) => {
+        event.preventDefault();
+
+        const ADS_URL = `${process.env.REACT_APP_ADS_LOGIN}/ads/login`;
+
+        // 현재 브라우저 크기 기준 비율로 팝업 크기 설정
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        // 원하는 비율 (예: 폭 80%, 높이 90%)
+        const width = Math.min(412, Math.floor(screenWidth * 0.8));   // 최대 400px 제한
+        const height = Math.min(917, Math.floor(screenHeight * 0.9)); // 최대 874px 제한
+        // const width = 412
+        // const height = 917
+
+        const left = window.screenX + (screenWidth - width) / 2;
+        const top = window.screenY + (screenHeight - height) / 2;
+
+        window.open(
+            ADS_URL,
+            "_blank",
+            `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
+        );
+    };
+
     return (
         <div className="relative border border-[#DDDDDD] rounded-lg shadow-md w-full">
             <div className="p-4 sm:bg-[#F3F5F7]">
@@ -198,7 +223,11 @@ const LocStoreListSearchForm = ({
                 <div className='border px-4 py-1'>
                     <button onClick={() => setShowPop(true)}>매장 수동 추가</button>
                 </div>
+                <div className='border px-4 py-1'>
+                    <button onClick={handleApp}>앱버전 열기</button>
+                </div>
             </div>
+ 
             {showPop &&
                 <LocStoreAdd
                     onClose={() => setShowPop(false)}
