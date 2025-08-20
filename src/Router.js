@@ -21,6 +21,7 @@ import TestGenerateVideo from "./pages/TestGenerateVideo/TestGenerateVideo";
 import TestMusic from "./pages/TestMusic/TestMusic";
 
 import TestEditImage from "./pages/TestEditImage/TestEditImage";
+import TestBackground from "./pages/TestBackground/TestBackground"
 import Login from "./pages/Login/Login";
 import Cms from "./pages/Cms/Cms";
 import TestFace from "./pages/TestFace/TestFace";
@@ -59,6 +60,7 @@ const Router = () => {
         <Route path="/test/generate/video" element={<TestGenerateVideo />} />
         <Route path="/test/music" element={<TestMusic />} />
         <Route path="/test/edit/image" element={<TestEditImage />} />
+        <Route path="/test/background" element={<TestBackground/>}/>
         <Route path="/test/face" element={<TestFace />} />
         <Route path="/cms" element={<Cms />} />
       </Routes>
