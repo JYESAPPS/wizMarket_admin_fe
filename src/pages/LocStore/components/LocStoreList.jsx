@@ -101,7 +101,7 @@ const LocStoreList = ({ data }) => {
     const handleModalClick = (event, storeBusinessNumber) => {
         event.preventDefault();
 
-        const ADS_URL = `${process.env.REACT_APP_ADS_LOGIN}/ads/login/${storeBusinessNumber}`;
+        const ADS_URL = `${process.env.REACT_APP_ADS}/ads/login/${storeBusinessNumber}`;
 
         // 현재 브라우저 크기 기준 비율로 팝업 크기 설정
         const screenWidth = window.innerWidth;
@@ -123,23 +123,6 @@ const LocStoreList = ({ data }) => {
         );
     };
 
-
-    // 옛날 버전
-    const handleTemplateClick = (event, storeBusinessNumber) => {
-        event.preventDefault();
-
-        const ADS_URL = `${process.env.REACT_APP_ADS}/ads/temp2/${storeBusinessNumber}`;
-        const width = 393;
-        const height = 900;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-
-        window.open(
-            ADS_URL,
-            "_blank",
-            `width=${width},height=${height},top=${top},left=${left}`
-        );
-    };
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -278,18 +261,10 @@ const LocStoreList = ({ data }) => {
                                         >
                                             wizAD
                                         </div>
-                                        <div
-                                            className="block sm:hidden bg-blue-300 text-white p-2 rounded border border-gray-300 hover:border-gray-400 cursor-pointer"
-                                            onClick={(e) => handleTemplateClick(e, item.store_business_number)}
-                                        >
-                                            AD
-                                        </div>
                                     </div>
                                 </td>
 
-                                <td className="border border-gray-300 p-4 hidden sm:table-cell"
-                                    onClick={(e) => handleTemplateClick(e, item.store_business_number)}
-                                >
+                                <td className="border border-gray-300 p-4 hidden sm:table-cell">
                                     {item.branch_name}
                                 </td>
                                 <td className="border border-gray-300 p-4 hidden sm:table-cell">{item.city_name}</td>

@@ -62,7 +62,7 @@ const LocStoreListSearchForm = ({
     const handleApp = (event, storeBusinessNumber) => {
         event.preventDefault();
 
-        const ADS_URL = `${process.env.REACT_APP_ADS_LOGIN}/ads/login`;
+        const ADS_URL = `${process.env.REACT_APP_ADS}/ads/login`;
 
         // 현재 브라우저 크기 기준 비율로 팝업 크기 설정
         const screenWidth = window.innerWidth;
