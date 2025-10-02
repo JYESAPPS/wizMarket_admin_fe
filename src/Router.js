@@ -25,6 +25,7 @@ import TestBackground from "./pages/TestBackground/TestBackground"
 import Login from "./pages/Login/Login";
 import Cms from "./pages/Cms/Cms";
 import TestFace from "./pages/TestFace/TestFace";
+import Test from "./pages/Test/Test"
 
 const Router = () => {
 
@@ -55,6 +56,7 @@ const Router = () => {
         <Route path="/store/content" element={<LocStoreContent />} />
         <Route path="/detail/category/content" element={<BizDetailCategoryContent />} />
         <Route path="/ads" element={<Ads />} />
+        <Route path="/test" element={<Test />} />
         <Route path="/test/gpt/model" element={<TestNewGptModel />} />
         <Route path="/test/draw/image" element={<TestDrawImage />} />
         <Route path="/test/generate/video" element={<TestGenerateVideo />} />
