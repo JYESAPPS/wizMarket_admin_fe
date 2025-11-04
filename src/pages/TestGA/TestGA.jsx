@@ -7,7 +7,7 @@ import LookerEmbed from './LookerEmbed'
 
 const TestGA = () => {
 
-    const REPORT_URL = "https://lookerstudio.google.com/embed/reporting/dc900c67-a976-491f-ae19-84dd27a7103c/page/kIV1C";
+    const REPORT_URL = "https://lookerstudio.google.com/embed/reporting/56fc2d43-ae94-429f-9b9d-d12d9c049c9e/page/kIV1C";
 
 
     return (
