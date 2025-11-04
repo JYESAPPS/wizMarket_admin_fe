@@ -26,6 +26,7 @@ import Login from "./pages/Login/Login";
 import Cms from "./pages/Cms/Cms";
 import TestFace from "./pages/TestFace/TestFace";
 import Test from "./pages/Test/Test"
+import TestGA from "./pages/TestGA/TestGA"
 
 const Router = () => {
 
@@ -64,6 +65,7 @@ const Router = () => {
         <Route path="/test/edit/image" element={<TestEditImage />} />
         <Route path="/test/background" element={<TestBackground/>}/>
         <Route path="/test/face" element={<TestFace />} />
+        <Route path="/test/GA" element={<TestGA />} />
         <Route path="/cms" element={<Cms />} />
       </Routes>
     </BrowserRouter>
