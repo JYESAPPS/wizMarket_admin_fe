@@ -80,7 +80,7 @@ const LocStoreList = ({ data }) => {
             // ✅ 서버에서 UUID나 기타 식별자 응답받기
             const { uuid } = response.data;  // 예시: { "uuid": "123e4567..." }
 
-            const REPORT_PATH = `/report/${encodeURIComponent(uuid)}`;
+            const REPORT_PATH = `${process.env.REACT_BASE_REPORT_PATH}/${encodeURIComponent(uuid)}`;
             const REPORT_URL = `${process.env.REACT_APP_REPORT}${REPORT_PATH}?uuid=${encodeURIComponent(uuid)}`;
 
 
