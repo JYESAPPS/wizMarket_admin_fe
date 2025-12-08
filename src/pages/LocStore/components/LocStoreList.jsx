@@ -80,8 +80,12 @@ const LocStoreList = ({ data }) => {
             // ✅ 서버에서 UUID나 기타 식별자 응답받기
             const { uuid } = response.data;  // 예시: { "uuid": "123e4567..." }
 
+            const REPORT_PATH = `/report/${encodeURIComponent(uuid)}`;
+            const REPORT_URL = `${process.env.REACT_APP_REPORT}${REPORT_PATH}?uuid=${encodeURIComponent(uuid)}`;
+
+
             // ✅ 받은 UUID로 새창 열기
-            const REPORT_URL = `${process.env.REACT_APP_REPORT}/wizmarket/report/${uuid}`;
+
             const width = 412;
             const height = 900;
             const left = window.screenX + (window.outerWidth - width) / 2;
