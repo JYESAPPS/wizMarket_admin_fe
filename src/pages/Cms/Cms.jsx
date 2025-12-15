@@ -42,7 +42,7 @@ const Cms = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/get/category`);
+                const response = await axios.get(`${process.env.REACT_APP_FASTAPI_ADS_URL}/back/ads/get/category`);
                 const sorted = (response.data.category_list || []).sort((a, b) => a.name.localeCompare(b.name, 'ko'));
                 setCategoryList(sorted);
             } catch (error) {
@@ -59,7 +59,7 @@ const Cms = () => {
         const fetchImageList = async () => {
             try {
                 const response = await axios.post(
-                    `${process.env.REACT_APP_FASTAPI_ADS_URL}/ads/get/image/list`,
+                    `${process.env.REACT_APP_FASTAPI_ADS_URL}/back/ads/get/image/list`,
                     { categoryId: selectedCategoryId }
                 );
                 setImageList(response.data.image_list || []);  // fallback
@@ -74,17 +74,34 @@ const Cms = () => {
 
 
 
+    const parseNumberedPrompts = (text) => {
+        const normalized = (text || "").replace(/\r\n/g, "\n"); // 윈도우 줄바꿈 보정
+        const regex = /(?:^|\n)\s*\d+\.\s*([\s\S]*?)(?=\n\s*\d+\.\s*|$)/g;
+
+        const result = [];
+        let match;
+        while ((match = regex.exec(normalized)) !== null) {
+            const prompt = (match[1] || "").trim();
+            if (prompt) result.push(prompt);
+        }
+
+        // ✅ 번호 포맷이 아예 없으면(실수 입력) 전체를 1개로 취급하고 싶다면:
+        // if (result.length === 0 && normalized.trim()) return [normalized.trim()];
+
+        return result;
+    };
 
     // 프롬프트 입력 처리
     const handlePromptChange = (idx, value) => {
-        const updated = [...styleInputs];
-        updated[idx].rawInput = value;
-        // 수정된 코드 (세미콜론 기준 분리)
-        updated[idx].prompts = value
-            .split(";")
-            .map(p => p.trim())
-            .filter(p => p.length > 0);
-        setStyleInputs(updated);
+        setStyleInputs(prev => {
+            const updated = [...prev];
+            updated[idx] = {
+                ...updated[idx],
+                rawInput: value,
+                prompts: parseNumberedPrompts(value), // ✅ 여기만 변경
+            };
+            return updated;
+        });
     };
 
     // 등록
@@ -160,7 +177,7 @@ const Cms = () => {
                                     <div key={idx}>
                                         <label className="block font-semibold pb-1">스타일 {style.designId}</label>
                                         <textarea
-                                            rows={3}
+                                            rows={7}
                                             className="w-full border px-2 py-1 resize-none"
                                             placeholder="프롬프트 입력 (세미콜론 ; 으로 구분)"
                                             value={style.rawInput}
